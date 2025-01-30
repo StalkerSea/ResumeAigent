@@ -1,12 +1,12 @@
 # Issues Reporting Guidelines
 
-Welcome to the AI Hawk Contributing Guide and Issues Tracker! To keep things organized and ensure issues are resolved quickly, please follow the guidelines below when submitting a bug report, feature request, or any other issue.
+Welcome to the ResumeAigent Contributing Guide and Issues Tracker! To keep things organized and ensure issues are resolved quickly, please follow the guidelines below when submitting a bug report, feature request, or any other issue.
 
 If you have a general question, are curious about how something in Python works, please remember that [Google](https://google.com) is your friend and it can answer many questions.
 
 This is a work in progress and you may encounter bugs.
 
-The employers who you are applying to are not looking for candidates who need someone to hold their hand and do everything for them, they are not your parents, they are your potential boses; they will be expecting you to be able to solve simple problems on your own, the AI Hawk mods and devs expect the same of you.
+The employers who you are applying to are not looking for candidates who need someone to hold their hand and do everything for them, they are not your parents, they are your potential boses; they will be expecting you to be able to solve simple problems on your own, the ResumeAigent mods and devs expect the same of you.
 
 Please do not beg in the issues tracker, discussions or chat.  I am not here to give you a job, I am here to provide you with a tool for you to go out and find a job on your own.  I will try to have instructions for all steps of the process, but you must read the docs, learn on your own, and understand that this is an open-source project run by volunteers.  It will require you to do some work of your own.
 
