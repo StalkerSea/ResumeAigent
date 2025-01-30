@@ -13,16 +13,15 @@
 ## Table of Contents
 
 1. [Introduction](#introduction)
-2. [Features](#features)
+2. [Features (currently unavailable)](#features)
 3. [Installation](#installation)
 4. [Configuration](#configuration)
 5. [Usage](#usage)
 6. [Documentation](#documentation)
 7. [Troubleshooting](#troubleshooting)
 8. [Conclusion](#conclusion)
-9. [Contributors](#contributors)
-10. [License](#license)
-11. [Disclaimer](#disclaimer)
+9. [License](#license)
+10. [Disclaimer](#disclaimer)
 
 ## Introduction
 
@@ -548,7 +547,7 @@ For further assistance, please create an issue on the [GitHub repository](https:
     - Edit the file config.py located at ResumeAigent\config.py with the following
     - `LLM_MODEL_TYPE = 'ollama'`
     - `LLM_MPDEL = 'olmo2:7b'` (or any model you may find that is either better or faster)
-    - LLM_API_URL = '127.0.0.1:11434' (or if the port is different, or running on a different machine, change this)
+    - `LLM_API_URL = '127.0.0.1:11434'` (or if the port is different, or running on a different machine, change this appropriately)
 
 - Gemini and Ollama mixed (but free) Setup
 
@@ -569,7 +568,7 @@ For further assistance, please create an issue on the [GitHub repository](https:
 
   - For detailed instructions on editing YAML configuration sections for **ResumeAigent**, refer to this document:
   - [Download YAML Editing Guide (PDF)](https://www.scribd.com/document/788427840/Guide-Yaml-Sections)
-  - Written by Rushi, [Linkedin](https://www.linkedin.com/in/rushichaganti/), support him by following.
+  - Written by Rushi, [Linkedin](https://www.linkedin.com/in/rushichaganti/).
 
 - [OpenAI API Documentation](https://platform.openai.com/docs/)
 
