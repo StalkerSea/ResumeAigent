@@ -97,6 +97,7 @@ class Resume(BaseModel):
     certifications: Optional[List[Certifications]] = None
     languages: Optional[List[Language]] = None
     interests: Optional[List[str]] = None
+    skills: set[str] = Field(default_factory=set)
 
     @staticmethod
     def normalize_exam_format(exam):

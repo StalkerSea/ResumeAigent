@@ -50,3 +50,5 @@ This comprehensive overview will serve as a guideline for the recruitment proces
 ---
 
 # Job Description Summary"""
+
+get_relevant_skills = """Extract key skills from this text, focusing on relevant technical and soft skills. List them in order of importance and relevance. Ensure each skill is clearly defined."""

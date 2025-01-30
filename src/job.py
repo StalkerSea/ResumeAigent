@@ -9,6 +9,7 @@ class Job:
     link: str = ""
     apply_method: str = ""
     description: str = ""
+    requirements: str = ""
     summarize_job_description: str = ""
     recruiter_link: str = ""
     resume_path: str = ""

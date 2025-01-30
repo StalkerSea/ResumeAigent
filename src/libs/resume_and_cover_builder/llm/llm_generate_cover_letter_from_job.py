@@ -4,13 +4,11 @@ This creates the cover letter (in html, utils will then convert in PDF) matching
 # app/libs/resume_and_cover_builder/llm_generate_cover_letter_from_job.py
 import os
 import textwrap
-from ..utils import LoggerChatModel
+from src.libs.resume_and_cover_builder.llm.llm_job_parser import LLMParser
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from pathlib import Path
 from dotenv import load_dotenv
-from requests.exceptions import HTTPError as HTTPStatusError
 from pathlib import Path
 from loguru import logger
 
@@ -24,10 +22,9 @@ if not os.path.exists(log_folder):
 log_path = Path(log_folder).resolve()
 logger.add(log_path / "gpt_cover_letter_job_descr.log", rotation="1 day", compression="zip", retention="7 days", level="DEBUG")
 
-class LLMCoverLetterJobDescription:
-    def __init__(self, openai_api_key, strings):
-        self.llm_cheap = LoggerChatModel(ChatOpenAI(model_name="gpt-4o-mini", openai_api_key=openai_api_key, temperature=0.4))
-        self.llm_embeddings = OpenAIEmbeddings(openai_api_key=openai_api_key)
+class LLMCoverLetterJobDescription(LLMParser):
+    def __init__(self, global_config, strings):
+        super().__init__(global_config)
         self.strings = strings
 
     @staticmethod
@@ -55,12 +52,10 @@ class LLMCoverLetterJobDescription:
         Args:
             job_description_text (str): The plain text job description to be used.
         """
-        logger.debug("Starting job description summarization...")
         prompt = ChatPromptTemplate.from_template(self.strings.summarize_prompt_template)
         chain = prompt | self.llm_cheap | StrOutputParser()
         output = chain.invoke({"text": job_description_text})
         self.job_description = output
-        logger.debug(f"Job description summarization complete: {self.job_description}")
 
     def generate_cover_letter(self) -> str:
         """
@@ -85,6 +80,9 @@ class LLMCoverLetterJobDescription:
         logger.debug(f"Input data: {input_data}")
 
         output = chain.invoke(input_data)
+        
+        # Remove all ```html tags from the output
+        output = output.replace("```html", "").replace("```", "")
         logger.debug(f"Cover letter generation result: {output}")
 
         logger.debug("Cover letter generation completed")

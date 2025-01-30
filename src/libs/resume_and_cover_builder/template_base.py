@@ -32,7 +32,7 @@ prompt_cover_letter_template = """
     </div>
 </section>
 ```
-The results should be provided in html format, Provide only the html code for the cover letter, without any explanations or additional text and also without ```html ```
+The results should be provided in html format, Provide only the html code for the cover letter, without any explanations or additional text and never mention ```html ```. Return strictly only the html code for the aforementioned task.
 """
 prompt_header_template = """
 - **Template to Use**
@@ -58,7 +58,7 @@ prompt_header_template = """
   </div>
 </header>
 ```
-The results should be provided in html format, Provide only the html code for the resume, without any explanations or additional text and also without ```html ```
+The results should be provided in html format.
 """
 
 prompt_education_template = """
@@ -85,7 +85,7 @@ prompt_education_template = """
     </div>
 </section>
 ```
-The results should be provided in html format, Provide only the html code for the resume, without any explanations or additional text and also without ```html ```"""
+The results should be provided in html format."""
 
 
 prompt_working_experience_template = """
@@ -140,7 +140,7 @@ prompt_working_experience_template = """
     </div>
 </section>
 ```
-The results should be provided in html format, Provide only the html code for the resume, without any explanations or additional text and also without ```html ```"""
+The results should be provided in html format."""
 
 
 prompt_projects_template = """
@@ -166,18 +166,9 @@ prompt_projects_template = """
           <li>[Describe any notable recognition or reception]</li>
       </ul>
     </div>
-    <div class="entry">
-      <div class="entry-header">
-          <span class="entry-name"><i class="fab fa-github"></i> <a href="[Github Repo or Link]">[Project Name]</a></span>
-      </div>
-      <ul class="compact-list">
-          <li>[Describe any notable recognition or reception]</li>
-          <li>[Describe any notable recognition or reception]</li>
-      </ul>
-    </div>
 </section>
 ```
-The results should be provided in html format, Provide only the html code for the resume, without any explanations or additional text and also without ```html ```
+The results should be provided in html format.
 """
 
 
@@ -193,7 +184,7 @@ prompt_achievements_template = """
     </ul>
 </section>
 ```
-The results should be provided in html format, Provide only the html code for the resume, without any explanations or additional text and also without ```html ```
+The results should be provided in html format.
 """
 
 prompt_certifications_template = """
@@ -207,7 +198,7 @@ prompt_certifications_template = """
     </ul>
 </section>
 ```
-The results should be provided in html format, Provide only the html code for the resume, without any explanations or additional text and also without ```html ```
+The results should be provided in html format.
 """
 
 prompt_additional_skills_template = """
@@ -235,5 +226,35 @@ prompt_additional_skills_template = """
     </div>
 </section>
 '''
-The results should be provided in html format, Provide only the html code for the resume, without any explanations or additional text and also without ```html ```
+The results should be provided in html format.
+"""
+
+prompt_relevant_skills_template = """
+- **Template to Use**
+'''
+<section id="skills-languages">
+    <h2>Additional Skills</h2>
+    <div class="two-column">
+      <ul class="compact-list">
+          <li><strong>[Technical Skills ordered by relevance]</strong></li>
+          <li>[Specific Skill or Technology]</li>
+          <li>[Specific Skill or Technology]</li>
+          <li>[Specific Skill or Technology]</li>
+          <li>[Specific Skill or Technology]</li>
+          <li>[Specific Skill or Technology]</li>
+          <li>[Specific Skill or Technology]</li>
+      </ul>
+      <ul class="compact-list">
+          <li><strong>[Domain Knowledge, Soft Skills or mixture of both ]</strong></li>
+          <li>[Specific Skill or Technology]</li>
+          <li>[Specific Skill or Technology]</li>
+          <li>[Specific Skill or Technology]</li>
+          <li>[Specific Skill or Technology]</li>
+          <li>[Specific Skill or Technology]</li>
+          <li><strong>Languages:</strong> </li>
+      </ul>
+    </div>
+</section>
+'''
+The results should be provided in html format.
 """

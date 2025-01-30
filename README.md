@@ -1,23 +1,14 @@
 <a name="top"></a>
-<div align="center">
-<img src="./assets/AIHawk.png">
 
-# AIHawk the first Jobs Applier AI Agent
+<div style="align: center;">
 
-**🤖🔍 
-Your AI-powered job search assistant. Automate applications, get personalized recommendations and land your dream job faster.**
+# ResumeAigent: A Jobs and Resume AI Agent
 
-Join our community: [Telegram](https://t.me/AIhawkCommunity)
-
-[![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](https://t.me/AIhawkCommunity)
-
+**🤖🔍 Your AI-powered resume maker. Make normal resumes, or make resumes according to your resume information and tailored to the job you provide.**
 
 </div>
 
-**Creator** [feder-cr](https://github.com/feder-cr)</br>
-As AIHawk is focusing on their proprietary product - solving problems in hiring for companies, currently this project is led, managed, and maintained by a group of open-source contributors, with a focus on building tools to help job seekers land the jobs they deserve.
-
-Jobs_Applier_AIHawk is continuously evolving, and your feedback, suggestions, and contributions are highly valued. Feel free to open issues, suggest enhancements, or submit pull requests to help improve the project. Let's work together to make Auto_Jobs_Applier_AIHawk a powerful tool for job seekers worldwide.
+**Project Maintainer / Lead**: [StalkerSea](https://github.com/StalkerSea)
 
 ## Table of Contents
 
@@ -35,12 +26,7 @@ Jobs_Applier_AIHawk is continuously evolving, and your feedback, suggestions, an
 
 ## Introduction
 
-Jobs_Applier_AIHawk is a cutting-edge, automated tool designed to revolutionize the job search and application process. In today's fiercely competitive job market, where opportunities can vanish in the blink of an eye, this program offers job seekers a significant advantage by leveraging the power of automation and artificial intelligence.
-
-### The Challenge of Modern Job Hunting
-
-In the digital age, the job search landscape has undergone a dramatic transformation. While online platforms have opened up a world of opportunities, they have also intensified competition. Job seekers often find themselves spending countless hours scrolling through listings, tailoring applications, and repetitively filling out forms. This process can be not only time-consuming but also emotionally draining, leading to job search fatigue and missed opportunities.
-
+ResumeAigent is a cutting-edge, automated tool designed to revolutionize the job search and application process. In today's fiercely competitive job market, where opportunities can vanish in the blink of an eye, this program offers job seekers a significant advantage by leveraging the power of automation and artificial intelligence.
 
 ## Installation
 
@@ -54,30 +40,32 @@ In the digital age, the job search landscape has undergone a dramatic transforma
   - 3.11.9(64b)
   - 3.12.5(64b)
 
-### Option 1: Using Python Virtual Environment 
+### Option 1: Using Python Virtual Environment
 
 1. **Download and Install Python:**
 
-   Ensure you have the last Python version  installed. If not, download and install it from Python's official website. For detailed instructions, refer to the tutorials:
+   Ensure you have the last Python version installed. If not, download and install it from Python's official website. For detailed instructions, refer to the tutorials:
 
    - [How to Install Python on Windows](https://www.geeksforgeeks.org/how-to-install-python-on-windows/)
    - [How to Install Python on Linux](https://www.geeksforgeeks.org/how-to-install-python-on-linux/)
    - [How to Download and Install Python on macOS](https://www.geeksforgeeks.org/how-to-download-and-install-python-latest-version-on-macos-mac-os-x/)
 
 2. **Download and Install Google Chrome:**
+
    - Download and install the latest version of Google Chrome from its default location on the [official website](https://www.google.com/chrome).
 
 3. **Clone the repository:**
 
    ```bash
-   git clone https://github.com/feder-cr/Jobs_Applier_AI_Agent.git
-   
-   cd Jobs_Applier_AI_Agent
+   git clone https://github.com/StalkerSea/ResumeAigent.git
+
+   cd ResumeAigent
    ```
 
 4. **Activate virtual environment:**
 
    For Unix-based machines -
+
    ```bash
    python3 -m venv virtual
    ```
@@ -117,7 +105,6 @@ This file contains sensitive information. Never share or commit this file to ver
     You can find more about your organization's limits on the [official page](https://platform.openai.com/settings/organization/limits).
   - For obtaining Gemini API key visit [Google AI for Devs](https://ai.google.dev/gemini-api/docs/api-key)
 
-
 #### 1.1 config.py - Customize LLM model endpoint
 
 - `LLM_MODEL_TYPE`:
@@ -135,7 +122,7 @@ This file contains sensitive information. Never share or commit this file to ver
     - claude: <https://api.anthropic.com/v1>
     - gemini: <https://aistudio.google.com/app/apikey>
 - Note: To run local Ollama, follow the guidelines here: [Guide to Ollama deployment](https://github.com/ollama/ollama). The `LLM_API_URL` field is only required for Ollama.
-  
+
 ### 2. plain_text_resume.yaml
 
 This file contains your resume information in a structured format. Fill it out with your personal details, education, work experience, and skills. This information is used to auto-fill application forms and generate customized resumes.
@@ -143,6 +130,7 @@ This file contains your resume information in a structured format. Fill it out w
 Each section has specific fields to fill out:
 
 - `personal_information:`
+
   - This section contains basic personal details to identify yourself and provide contact information.
     - **name**: Your first name.
     - **surname**: Your last name or family name.
@@ -175,7 +163,9 @@ Each section has specific fields to fill out:
   ```
 
 - `education_details:`
+
   - This section outlines your academic background, including degrees earned and relevant coursework.
+
     - **degree**: The type of degree obtained (e.g., Bachelor's Degree, Master's Degree).
     - **university**: The name of the university or institution where you studied.
     - **final_evaluation_grade**: Your Grade Point Average or equivalent measure of academic performance.
@@ -203,7 +193,9 @@ Each section has specific fields to fill out:
   ```
 
 - `experience_details:`
+
   - This section details your work experience, including job roles, companies, and key responsibilities.
+
     - **position**: Your job title or role.
     - **company**: The name of the company or organization where you worked.
     - **employment_period**: The timeframe during which you were employed in the role, using the format MM/YYYY - MM/YYYY.
@@ -232,7 +224,9 @@ Each section has specific fields to fill out:
   ```
 
 - `projects:`
+
   - Include notable projects you have worked on, including personal or professional projects.
+
     - **name**: The name or title of the project.
     - **description**: A brief summary of what the project involves or its purpose.
     - **link**: URL to the project, if available (e.g., GitHub repository, website).
@@ -250,7 +244,9 @@ Each section has specific fields to fill out:
     ```
 
 - `achievements:`
+
   - Highlight notable accomplishments or awards you have received.
+
     - **name**: The title or name of the achievement.
     - **description**: A brief explanation of the achievement and its significance.
 
@@ -265,7 +261,9 @@ Each section has specific fields to fill out:
   ```
 
 - `certifications:`
+
   - Include any professional certifications you have earned.
+
     - name: "PMP"  
       description: "Certification for project management professionals, issued by the Project Management Institute (PMI)"
 
@@ -278,7 +276,9 @@ Each section has specific fields to fill out:
   ```
 
 - `languages:`
+
   - Detail the languages you speak and your proficiency level in each.
+
     - **language**: The name of the language.
     - **proficiency**: Your level of proficiency (e.g., Native, Fluent, Intermediate).
 
@@ -295,6 +295,7 @@ Each section has specific fields to fill out:
 - `interests:`
 
   - Mention your professional or personal interests that may be relevant to your career.
+
     - **interest**: A list of interests or hobbies.
 
   - Example:
@@ -309,7 +310,9 @@ Each section has specific fields to fill out:
   ```
 
 - `availability:`
+
   - State your current availability or notice period.
+
     - **notice_period**: The amount of time required before you can start a new role (e.g., "2 weeks", "1 month").
 
   - Example:
@@ -320,7 +323,9 @@ Each section has specific fields to fill out:
   ```
 
 - `salary_expectations:`
+
   - Provide your expected salary range.
+
     - **salary_range_usd**: The salary range you are expecting, expressed in USD.
 
   - Example:
@@ -331,7 +336,9 @@ Each section has specific fields to fill out:
   ```
 
 - `self_identification:`
+
   - Provide information related to personal identity, including gender and pronouns.
+
     - **gender**: Your gender identity.
     - **pronouns**: The pronouns you use (e.g., He/Him, She/Her, They/Them).
     - **veteran**: Your status as a veteran (e.g., Yes, No).
@@ -350,7 +357,9 @@ Each section has specific fields to fill out:
   ```
 
 - `legal_authorization:`
+
   - Indicate your legal ability to work in various locations.
+
     - **eu_work_authorization**: Whether you are authorized to work in the European Union (Yes/No).
     - **us_work_authorization**: Whether you are authorized to work in the United States (Yes/No).
     - **requires_us_visa**: Whether you require a visa to work in the United States (Yes/No).
@@ -370,7 +379,7 @@ Each section has specific fields to fill out:
 
   - Example:
 
-     ```yaml
+    ```yaml
     legal_authorization:
     eu_work_authorization: "Yes"
     us_work_authorization: "Yes"
@@ -391,7 +400,9 @@ Each section has specific fields to fill out:
     ```
 
 - `work_preferences:`
+
   - Specify your preferences for work arrangements and conditions.
+
     - **remote_work**: Whether you are open to remote work (Yes/No).
     - **in_person_work**: Whether you are open to in-person work (Yes/No).
     - **open_to_relocation**: Whether you are willing to relocate for a job (Yes/No).
@@ -436,21 +447,23 @@ Using this folder as a guide can be particularly helpful for:
 
 1. **Data Folder:**
    Ensure that your data_folder contains the following files:
+
    - `secrets.yaml`
    - `plain_text_resume.yaml`
 
+2. **Output Folder:**
+   Contains the output of the bot.
+   TODO
 
+3. **Run the Bot:**
 
-2. **Run the Bot:**
-
-   Jobs_Applier_AIHawk offers flexibility in how it handles your PDF resume:
+   ResumeAigent offers flexibility in how it handles your PDF resume:
 
 - **Resume and Cover Letter Generation:**
 
-   ```bash
-   python main.py
-   ```
-
+  ```bash
+  python main.py
+  ```
 
 ### Troubleshooting
 
@@ -491,7 +504,6 @@ yaml.scanner.ScannerError: while scanning a simple key
 - Use a YAML validator tool
 - Avoid unnecessary special characters or quotes
 
-
 ### General Troubleshooting Tips
 
 - Use the latest version of the script
@@ -499,28 +511,63 @@ yaml.scanner.ScannerError: while scanning a simple key
 - Check internet connection stability
 - Clear browser cache and cookies if issues persist
 
-For further assistance, please create an issue on the [GitHub repository](https://github.com/feder-cr/Auto_Jobs_Applier_AIHawk/issues) with detailed information about your problem, including error messages and your configuration (with sensitive information removed).
+For further assistance, please create an issue on the [GitHub repository](https://github.com/StalkerSea/ResumeAigent/issues) with detailed information about your problem, including error messages and your configuration (with sensitive information removed).
 
 ## Documentation
 
 ### For Users
 
-- Ollama Setup
-  - Follow the instructions below to ensure proper configuration of **AIHawk** with **Ollama** and **Gemini**.
-  - Written by Rushi, [Linkedin](https://www.linkedin.com/in/rushichaganti/), support him by following.
-  - Step 1: If your system meets the requirements for Ollama, install it from the following URL https://ollama.com/download.
-  - Step 2: Verify Ollama is Running 
-    - Open a browser and navigate to localhost:11434  to confirm Ollama is running
-   - If Ollama runs correctly, you'll see confirmation in the browser.
-   - Step 3: Edit Configuration in VS Code
-     - Edit the file config.py located at Auto_Jobs_Applier_AIHawk\config.py with the following
-     - llm_model_type: ollama 
-     - llm_model: 'llama3.2:1b' 
-     - llm_api_url: 'http://127.0.0.1:11434/'
-     
+- OpenAI Setup
 
-- Editing YAML Files
-  - For detailed instructions on editing YAML configuration sections for **AIHawk**, refer to this document:
+  - Follow the instructions below to ensure proper configuration of **ResumeAigent** with **OpenAI aka. ChatGPT**.
+  - Step 1: Get your API key at https://platform.openai.com/api-keys.
+    - Replace `llm_api_key` with your newly created API key on the file secrets.yaml located at ResumeAigent\data_folder\secrets.yaml
+  - Step 2: Edit Configuration in VS Code
+    - Edit the file config.py located at ResumeAigent\config.py with the following
+    - `LLM_MODEL_TYPE = 'openai'`
+    - `LLM_MODEL = 'gpt-4o-mini'` (or any model you may find that is either cheaper or free)
+  - Note: This costs money, just as OpenAI does
+
+- Gemini Setup
+
+  - Follow the instructions below to ensure proper configuration of **ResumeAigent** with **Google Gemini**.
+  - Step 1: Get your free API key at https://aistudio.google.com/app/apikey.
+    - Replace `llm_api_key` with your newly created API key on the file secrets.yaml located at ResumeAigent\data_folder\secrets.yaml
+  - Step 2: Edit Configuration in VS Code
+    - Edit the file config.py located at ResumeAigent\config.py with the following
+    - `LLM_MODEL_TYPE = 'gemini'`
+    - `LLM_MPDEL = 'gemini-pro'` (or any model you may find that is either cheaper or free; **UNTESTED FOR TEXT EMBEDDINGS aka. ANYTHING TAILORED**)
+  - Note: This costs money, just as OpenAI does
+
+- Ollama Setup
+
+  - Follow the instructions below to ensure proper configuration of **ResumeAigent** with **Ollama**.
+  - Step 1: Download Ollama for your operating system.
+  - Step 2: Verify Ollama is Running
+  - Step 3: Edit Configuration in VS Code
+    - Edit the file config.py located at ResumeAigent\config.py with the following
+    - `LLM_MODEL_TYPE = 'ollama'`
+    - `LLM_MPDEL = 'olmo2:7b'` (or any model you may find that is either better or faster)
+    - LLM_API_URL = '127.0.0.1:11434' (or if the port is different, or running on a different machine, change this)
+
+- Gemini and Ollama mixed (but free) Setup
+
+  - Follow the instructions below to ensure proper configuration of **ResumeAigent** with **Ollama** and **Gemini**.
+  - Step 1: Get your free API key at https://aistudio.google.com/app/apikey.
+  - Step 2: Verify Ollama is Running
+    - Replace `llm_api_key` with your newly created API key on the file secrets.yaml located at ResumeAigent\data_folder\secrets.yaml
+  - Step 3: Edit Configuration in VS Code
+    - Edit the file config.py located at ResumeAigent\config.py with the following
+    - `LLM_MODEL_TYPE = 'gemini'`
+    - `LLM_MPDEL = 'gemini-2.0-flash-exp'` (or any model you may find that is either cheaper or free; **ENSURE IT STILL EXISTS!!**)
+
+- HuggingFace Setup
+
+  No idea; support is preliminary and very untested. Feel free to leave issues with screenshots and logs to improve this!
+
+- Editing YAML Files (preserved old documentation)
+
+  - For detailed instructions on editing YAML configuration sections for **ResumeAigent**, refer to this document:
   - [Download YAML Editing Guide (PDF)](https://www.scribd.com/document/788427840/Guide-Yaml-Sections)
   - Written by Rushi, [Linkedin](https://www.linkedin.com/in/rushichaganti/), support him by following.
 
@@ -530,33 +577,33 @@ For further assistance, please create an issue on the [GitHub repository](https:
 
 - [Contribution Guidelines](CONTRIBUTING.md)
 
-- [Lang Chain Developer Documentation](https://python.langchain.com/v0.2/docs/integrations/components/)
+- [Lang Chain Developer Documentation (??? Why is this here?)](https://python.langchain.com/v0.2/docs/integrations/components/)
 
-
-- If you encounter any issues, you can open an issue on [GitHub](https://github.com/feder-cr/Auto_Jobs_Applier_AIHawk/issues).
+- If you encounter any issues, you can open an issue on [GitHub](https://github.com/StalkerSea/ResumeAigent/issues).
   Please add valuable details to the subject and to the description. If you need a new feature then please reflect this.  
   I'll be more than happy to assist you!
 
-- Note for Contributors: If you would like to submit a Pull Request (PR), please target the `release` branch instead of `main`. The `release` branch is used for testing new code changes and will be periodically merged into `main` after validation. This approach ensures that only tested features are included in the main branch.
+- Note for Contributors: If you would like to submit a Pull Request (PR), please target the `test` branch instead of `main`. The `test` branch is used for testing new code changes and will be periodically merged into `main` after validation. This approach ensures that only tested features are included in the main branch.
 
 ## Conclusion
 
-Jobs_Applier_AIHawk provides a significant advantage in the modern job market by automating and enhancing the job application process. With features like dynamic resume generation and AI-powered personalization, it offers unparalleled flexibility and efficiency. Whether you're a job seeker aiming to maximize your chances of landing a job, a recruiter looking to streamline application submissions, or a career advisor seeking to offer better services, Auto_Jobs_Applier_AIHawk is an invaluable resource. By leveraging cutting-edge automation and artificial intelligence, this tool not only saves time but also significantly increases the effectiveness and quality of job applications in today's competitive landscape.
+ResumeAigent provides a significant advantage in the modern job market by automating and enhancing the job application process. With features like dynamic resume generation and AI-powered personalization, it offers unparalleled flexibility and efficiency. Whether you're a job seeker aiming to maximize your chances of landing a job, a recruiter looking to streamline application submissions, or a career advisor seeking to offer better services, ResumeAigent is an invaluable resource. By leveraging cutting-edge automation and artificial intelligence, this tool not only saves time but also significantly increases the effectiveness and quality of job applications in today's competitive landscape.
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=feder-cr/Auto_Jobs_Applier_AIHawk&type=Date)](https://star-history.com/#feder-cr/Auto_Jobs_Applier_AIHawk&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=StalkerSea/ResumeAigent&type=Date)](https://star-history.com/#StalkerSea/ResumeAigent&Date)
 
 If you like the project please star ⭐ the repository!
 
 ## Special Thanks
-[![Contributors](https://img.shields.io/github/contributors/feder-cr/Auto_Jobs_Applier_AIHawk)](https://github.com/feder-cr/Auto_Jobs_Applier_AIHawk/graphs/contributors)
 
-<a href="https://github.com/AIHawk-co/Auto_Jobs_Applier/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=AIHawk-co/Auto_Jobs_Applier" />
+Original Maker of this botched and destroyed project: [Feder-cr](https://github.com/feder-cr/) and his original work heavily altered to not make their closed-source product lose appeal: (Jobs Applier AI Agent AIHawk)[https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk]
+[![Contributors for the original project](https://img.shields.io/github/contributors/feder-cr/Jobs_Applier_AI_Agent_AIHawk)](https://github.com/feder-cr/Jobs_Applier_AI_Agent_AIHawk/graphs/contributors)
+[![Contributors](https://img.shields.io/github/contributors/StalkerSea/ResumeAigent)](https://github.com/StalkerSea/ResumeAigent/graphs/contributors)
+
+<a href="https://github.com/StalkerSea/ResumeAigent/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=StalkerSea/ResumeAigent" />
 </a>
-
-Made with [contrib.rocks](https://contrib.rocks).
 
 ## License
 
@@ -564,11 +611,10 @@ This project is licensed under the AGPL License. Documentation is licensed under
 
 The AGPL License requires that any derivative work must also be open source and distributed under the same license.
 
-The CC BY License permits others to distribute, remix, adapt, and build upon your work, even for commercial purposes, as long as they credit you for the original creation. 
- 
+The CC BY License permits others to distribute, remix, adapt, and build upon your work, even for commercial purposes, as long as they credit you for the original creation.
 
 ## Disclaimer
 
-This tool, Jobs_Applier_AIHawk, is intended for use at your own risk. The creators / maintainers / contributors assume no responsibility for any consequences arising from its use. Users are advised to comply with the terms of service of relevant platforms and adhere to all applicable laws, regulations, and ethical guidelines. The use of automated tools for job applications may carry risks, including potential impacts on user accounts. Proceed with caution and at your own discretion.
+This tool, ResumeAigent, is intended for use at your own risk. The creators / maintainers / contributors assume no responsibility for any consequences arising from its use. Users are advised to comply with the terms of service of relevant platforms and adhere to all applicable laws, regulations, and ethical guidelines. The use of automated tools for job applications may carry risks, including potential impacts on user accounts. Proceed with caution and at your own discretion.
 
 [Back to top 🚀](#top)

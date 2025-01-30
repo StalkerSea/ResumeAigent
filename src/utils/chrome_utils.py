@@ -35,10 +35,11 @@ def chrome_browser_options():
     
     return options
 
-def init_browser() -> webdriver.Chrome:
+def init_browser(options=None) -> webdriver.Chrome:
     try:
-        options = chrome_browser_options()
-        # Use webdriver_manager to handle ChromeDriver
+        if options is None:
+            options = chrome_browser_options()
+        # Use webdriver_manager to handle ChromeDriver 
         driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
         logger.debug("Chrome browser initialized successfully.")
         return driver

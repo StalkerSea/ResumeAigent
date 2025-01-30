@@ -162,3 +162,4 @@ venv.bak/
 mono_crash.*
 
 job_applications/
+data_folder/*

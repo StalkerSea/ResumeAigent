@@ -17,8 +17,8 @@ from langchain_core.prompt_values import StringPromptValue
 from langchain_core.prompts import ChatPromptTemplate
 from Levenshtein import distance
 
-import ai_hawk.llm.prompts as prompts
 from config import JOB_SUITABILITY_SCORE
+from src.libs.resume_and_cover_builder.llm import prompts
 from src.utils.constants import (
     AVAILABILITY,
     CERTIFICATIONS,
@@ -38,7 +38,6 @@ from src.utils.constants import (
     JOB_DESCRIPTION,
     LANGUAGES,
     LEGAL_AUTHORIZATION,
-    LLM_MODEL_TYPE,
     LOGPROBS,
     MODEL,
     MODEL_NAME,
@@ -62,7 +61,6 @@ from src.utils.constants import (
     SALARY_EXPECTATIONS,
     SELF_IDENTIFICATION,
     SYSTEM_FINGERPRINT,
-    TEXT,
     TIME,
     TOKEN_USAGE,
     TOTAL_COST,
@@ -76,12 +74,10 @@ import config as cfg
 
 load_dotenv()
 
-
 class AIModel(ABC):
     @abstractmethod
     def invoke(self, prompt: str) -> str:
         pass
-
 
 class OpenAIModel(AIModel):
     def __init__(self, api_key: str, llm_model: str):
@@ -163,7 +159,6 @@ class GeminiModel(AIModel):
         response = self.model.invoke(prompt)
         return response
 
-
 class HuggingFaceModel(AIModel):
     def __init__(self, api_key: str, llm_model: str):
         from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
@@ -179,7 +174,6 @@ class HuggingFaceModel(AIModel):
             f"Invoking Model from Hugging Face API. Response: {response}, Type: {type(response)}"
         )
         return response
-
 
 class AIAdapter:
     def __init__(self, config: dict, api_key: str):
@@ -211,7 +205,6 @@ class AIAdapter:
     def invoke(self, prompt: str) -> str:
         return self.model.invoke(prompt)
 
-
 class LLMLogger:
     def __init__(self, llm: Union[OpenAIModel, OllamaModel, ClaudeModel, GeminiModel]):
         self.llm = llm
@@ -224,7 +217,7 @@ class LLMLogger:
         logger.debug(f"Parsed reply received: {parsed_reply}")
 
         try:
-            calls_log = os.path.join(Path("data_folder/output"), "open_ai_calls.json")
+            calls_log = os.path.join(Path("data_folder/output"), "ai_calls.json")
             logger.debug(f"Logging path determined: {calls_log}")
         except Exception as e:
             logger.error(f"Error determining the log path: {str(e)}")
@@ -322,7 +315,6 @@ class LLMLogger:
         except Exception as e:
             logger.error(f"Error writing log entry to file: {str(e)}")
             raise
-
 
 class LoggerChatModel:
     def __init__(self, llm: Union[OpenAIModel, OllamaModel, ClaudeModel, GeminiModel]):
@@ -457,7 +449,6 @@ class LoggerChatModel:
             logger.error(f"Unexpected error while parsing LLM result: {str(e)}")
             raise
 
-
 class GPTAnswerer:
     def __init__(self, config, llm_api_key):
         self.ai_adapter = AIAdapter(config, llm_api_key)
@@ -508,13 +499,13 @@ class GPTAnswerer:
     
     def summarize_job_description(self, text: str) -> str:
         logger.debug(f"Summarizing job description: {text}")
-        prompts.summarize_prompt_template = self._preprocess_template_string(
-            prompts.summarize_prompt_template
-        )
-        prompt = ChatPromptTemplate.from_template(prompts.summarize_prompt_template)
-        chain = prompt | self.llm_cheap | StrOutputParser()
-        raw_output = chain.invoke({TEXT: text})
-        output = self._clean_llm_output(raw_output)
+        # strings.summarize_prompt_template = self._preprocess_template_string(
+        #     strings.summarize_prompt_template
+        # )
+        # prompt = ChatPromptTemplate.from_template(strings.summarize_prompt_template)
+        # chain = prompt | self.llm_cheap | StrOutputParser()
+        # output = chain.invoke({"text": text})
+        output = text[:100]
         logger.debug(f"Summary generated: {output}")
         return output
 

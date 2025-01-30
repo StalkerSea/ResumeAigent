@@ -4,10 +4,9 @@ Create a class that generates a job description based on a resume and a job desc
 # app/libs/resume_and_cover_builder/llm_generate_resume_from_job.py
 import os
 from src.libs.resume_and_cover_builder.llm.llm_generate_resume import LLMResumer
-from src.libs.resume_and_cover_builder.utils import LoggerChatModel
+# from src.libs.resume_and_cover_builder.llm.llm_job_parser import LLMParser
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_openai import ChatOpenAI
 from dotenv import load_dotenv
 from loguru import logger
 from pathlib import Path
@@ -22,8 +21,8 @@ log_path = Path(log_folder).resolve()
 logger.add(log_path / "gpt_resum_job_descr.log", rotation="1 day", compression="zip", retention="7 days", level="DEBUG")
 
 class LLMResumeJobDescription(LLMResumer):
-    def __init__(self, openai_api_key, strings):
-        super().__init__(openai_api_key, strings)
+    def __init__(self, global_config, strings):
+        super().__init__(global_config, strings)
 
     def set_job_description_from_text(self, job_description_text) -> None:
         """
@@ -91,7 +90,6 @@ class LLMResumeJobDescription(LLMResumer):
             "job_description": self.job_description
         })
 
-
     def generate_certifications_section(self) -> str:
         """
         Generate the certifications section of the resume.
@@ -103,32 +101,16 @@ class LLMResumeJobDescription(LLMResumer):
             "job_description": self.job_description
         })
 
-    def generate_additional_skills_section(self) -> str:
-        """
-        Generate the additional skills section of the resume.
-        Returns:
-            str: The generated additional skills section.
-        """
-        additional_skills_prompt_template = self._preprocess_template_string(
-            self.strings.prompt_additional_skills
+    def generate_relevant_skills(self, job_skills: str) -> str:
+        relevant_skills_prompt_template = self._preprocess_template_string(
+            self.strings.prompt_relevant_skills
         )
-        skills = set()
-        if self.resume.experience_details:
-            for exp in self.resume.experience_details:
-                if exp.skills_acquired:
-                    skills.update(exp.skills_acquired)
-
-        if self.resume.education_details:
-            for edu in self.resume.education_details:
-                if edu.exam:
-                    for exam in edu.exam:
-                        skills.update(exam.keys())
-        prompt = ChatPromptTemplate.from_template(additional_skills_prompt_template)
+        prompt = ChatPromptTemplate.from_template(relevant_skills_prompt_template)
         chain = prompt | self.llm_cheap | StrOutputParser()
         output = chain.invoke({
+            "job_requirements": job_skills,
+            "skills": self.resume.skills,
             "languages": self.resume.languages,
             "interests": self.resume.interests,
-            "skills": skills,
-            "job_description": self.job_description
         })
         return output

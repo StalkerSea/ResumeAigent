@@ -75,3 +75,15 @@ OLLAMA = "ollama"
 GEMINI = "gemini"
 HUGGINGFACE = "huggingface"
 PERPLEXITY = "perplexity"
+
+JOB_SELECTORS = [
+    {"type": "css selector", "value": "script[data-testid='job-ldjson']", "attr": "innerHTML"},
+    {"type": "css selector", "value": "div[data-testid='content']", "attr": "innerHTML"},
+    {"type": "css selector", "value": "div[class='details']", "attr": "innerHTML"},
+    {"type": "css selector", "value": "div[class*='details']", "attr": "innerHTML"},
+    #{"type": "css selector", "value": "div[class*='details']:not([class*='mx-details-container-padding'])", "attr": "innerHTML"},
+    {"type": "css selector", "value": "div[role='main']", "attr": "innerHTML"},
+    {"type": "class", "value": "flex-shrink", "attr": "innerHTML"},
+    {"type": "id", "value": "content", "attr": "innerHTML"},
+    {"type": "tag name", "value": "body", "attr": "innerHTML"}  # fallback
+]

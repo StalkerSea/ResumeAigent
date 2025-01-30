@@ -4,10 +4,13 @@ Create a class that generates a resume based on a resume and a resume template.
 # app/libs/resume_and_cover_builder/gpt_resume.py
 import os
 import textwrap
+from src.job import Job
 from src.libs.resume_and_cover_builder.utils import LoggerChatModel
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
+from langchain_ollama import ChatOllama
 from dotenv import load_dotenv
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from loguru import logger
@@ -23,13 +26,44 @@ if not os.path.exists(log_folder):
 log_path = Path(log_folder).resolve()
 logger.add(log_path / "gpt_resume.log", rotation="1 day", compression="zip", retention="7 days", level="DEBUG")
 
-class LLMResumer:
-    def __init__(self, openai_api_key, strings):
-        self.llm_cheap = LoggerChatModel(
-            ChatOpenAI(
-                model_name="gpt-4o-mini", openai_api_key=openai_api_key, temperature=0.4
+class LLMModelFactory:
+    @staticmethod
+    def create_llm(model_type: str, model_name: str, api_key: str = None, **kwargs):
+        model_type = model_type.lower()
+        
+        if model_type == "openai":
+            return ChatOpenAI(
+                model_name=model_name,
+                openai_api_key=api_key,
+                temperature=kwargs.get('temperature', 0.4)
             )
+        elif model_type == "gemini":
+            return ChatGoogleGenerativeAI(
+                model=model_name,
+                google_api_key=api_key,
+                temperature=kwargs.get('temperature', 0.4)
+            )
+        elif model_type == "ollama":
+            return ChatOllama(
+                model=model_name,
+                temperature=kwargs.get('temperature', 0.4)
+            )
+        else:
+            raise ValueError(f"Unsupported model type: {model_type}")
+
+class LLMResumer:
+    def __init__(self, config, strings):
+        model_type = getattr(config, 'LLM_MODEL_TYPE', 'openai')
+        model_name = getattr(config, 'LLM_MODEL', 'gpt-4-mini')
+        api_key = config.API_KEY
+        
+        llm = LLMModelFactory.create_llm(
+            model_type=model_type,
+            model_name=model_name,
+            api_key=api_key,
+            temperature=0.4
         )
+        self.llm_cheap = LoggerChatModel(llm)
         self.strings = strings
 
     @staticmethod
@@ -219,36 +253,54 @@ class LLMResumer:
         Returns:
             str: The generated additional skills section.
         """
-        additional_skills_prompt_template = self._preprocess_template_string(self.strings.prompt_additional_skills)
+        template = self.strings.prompt_additional_skills if data is None else self.strings.prompt_relevant_skills
+        additional_skills_prompt_template = self._preprocess_template_string(template)
         
-        skills = set()
         if self.resume.experience_details:
             for exp in self.resume.experience_details:
                 if exp.skills_acquired:
-                    skills.update(exp.skills_acquired)
+                    self.resume.skills.update(exp.skills_acquired)
 
         if self.resume.education_details:
             for edu in self.resume.education_details:
                 if edu.exam:
                     for exam in edu.exam:
-                        skills.update(exam.keys())
+                        self.resume.skills.update(exam.keys())
         prompt = ChatPromptTemplate.from_template(additional_skills_prompt_template)
         chain = prompt | self.llm_cheap | StrOutputParser()
-        input_data = {
-            "languages": self.resume.languages,
-            "interests": self.resume.interests,
-            "skills": skills,
-        } if data is None else data
+
+        if data is not None:
+            languages = ', '.join([f"{lang.language} - {lang.proficiency}".strip() for lang in data['languages']]) if data['languages'] else ''
+            interests = ', '.join(data['interests']).strip() if isinstance(data['interests'], list) else data['interests']
+            requirements = ', '.join(data['job_requirements']).strip() if isinstance(data['job_requirements'], list) else data['job_requirements']
+            skills = ', '.join(sorted(list(self.resume.skills))).strip() if isinstance(self.resume.skills, set) else ', '.join(self.resume.skills).strip() if isinstance(self.resume.skills, list) else self.resume.skills
+            
+            input_data = {
+                "job_requirements": requirements,
+                "skills": skills,
+                "interests": interests,
+                "languages": languages,
+            }
+        else: 
+            input_data = {
+                "skills": skills,
+                "interests": interests,
+                "languages": languages,
+            }
         output = chain.invoke(input_data)
         
         return output
 
-    def generate_html_resume(self) -> str:
+    def generate_html_resume(self, job: Job = None) -> str:
         """
         Generate the full HTML resume based on the resume object.
         Returns:
             str: The generated HTML resume.
         """
+        if not self.resume:
+            logger.error("The resume object is not set, set with `gpt_answerer.set_resume(self.resume_object)`.")
+            raise ValueError("The resume object is not set.")
+
         def header_fn():
             if self.resume.personal_information:
                 return self.generate_header()
@@ -280,9 +332,21 @@ class LLMResumer:
             return ""
 
         def additional_skills_fn():
-            if (self.resume.experience_details or self.resume.education_details or
-                self.resume.languages or self.resume.interests):
-                return self.generate_additional_skills_section()
+            nonlocal job
+            if job is not None and isinstance(job, Job):
+                if (self.resume.experience_details or self.resume.education_details or
+                    self.resume.languages or self.resume.interests or self.resume.skills):
+                    # According to the provided Job object, generate the additional skills section in JSON format
+                    job = {
+                        "interests": self.resume.interests,
+                        "job_requirements": job.requirements,
+                        "languages": self.resume.languages,
+                    } 
+                    return self.generate_additional_skills_section(job)
+            else:
+                if (self.resume.experience_details or self.resume.education_details or
+                    self.resume.languages or self.resume.interests):
+                    return self.generate_additional_skills_section()
             return ""
 
         # Create a dictionary to map the function names to their respective callables
@@ -319,4 +383,6 @@ class LLMResumer:
         full_resume += f"    {results.get('additional_skills', '')}\n"
         full_resume += "  </main>\n"
         full_resume += "</body>"
+        # Remove any html tags from the resume content
+        full_resume = full_resume.replace("```html", "").replace("```", "")
         return full_resume

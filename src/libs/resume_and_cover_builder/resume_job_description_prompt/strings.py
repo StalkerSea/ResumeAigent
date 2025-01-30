@@ -1,4 +1,4 @@
-from src.libs.resume_and_cover_builder.template_base import prompt_header_template, prompt_education_template, prompt_working_experience_template, prompt_projects_template, prompt_additional_skills_template, prompt_certifications_template, prompt_achievements_template
+from src.libs.resume_and_cover_builder.template_base import prompt_header_template, prompt_education_template, prompt_working_experience_template, prompt_projects_template, prompt_additional_skills_template, prompt_certifications_template, prompt_achievements_template, prompt_relevant_skills_template
 
 prompt_header = """
 Act as an HR expert and resume writer specializing in ATS-friendly resumes. Your task is to create a professional and polished header for the resume. The header should:
@@ -167,3 +167,35 @@ This comprehensive overview will serve as a guideline for the recruitment proces
 ---
 
 # Job Description Summary"""
+
+prompt_relevant_skills = """
+Act as an expert ATS resume analyst. Your task is to create a focused list of the most relevant skills for this job position that fit the candidate skills the best. Use the provided job requirements, the candidate's skills, their known languages and interests as input to extract all relevant information. This will involve conducting a thorough analysis of the job's responsibilities and the industry standards. You should consider both the technical and soft skills needed to excel in this role. Additionally, specify any educational qualifications, certifications, or experiences that are essential to the job.
+
+Compare:
+- Job Requirements: {job_requirements}
+- Available Skills: {skills} 
+- Languages Known: {languages}
+- Candidate Interests: {interests}
+
+Required Output Format:
+Technical Skills:
+- [Top technical skills relevant to role]
+
+Soft Skills: 
+- [Key soft skills relevant to role]
+
+Domain Knowledge:
+- [Relevant domain/industry expertise]
+
+Languages: [language1], [language2], [language3]
+
+Rules:
+1. Only include skills present in the candidate's profile
+3. Order skills by relevance to job requirements
+4. Include only relevant information to match the job description against the candidate's skills
+5. Use clear, industry-standard terminology
+6. If mentioned in the job requirements, include proficiency levels and/or years of experience
+7. Do not add or infer skills not listed in provided information
+""" + prompt_additional_skills_template
+# """+ prompt_relevant_skills_template
+#As a seasoned HR expert, your task is to match the job key skills and requirements necessary for the position of this job with the candidates. Use the provided job skills as input to extract all relevant information. This will involve conducting a thorough analysis of the job's responsibilities and the industry standards. You should consider both the technical and soft skills needed to excel in this role. Your analysis should also reflect on the evolving nature of this role, considering future trends and how they might affect the required competencies.
