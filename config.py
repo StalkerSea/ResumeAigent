@@ -3,7 +3,7 @@
 from src.utils.constants import DEBUG, ERROR, LLM_MODEL, OPENAI
 
 #config related to logging must have prefix LOG_
-LOG_LEVEL = 'ERROR'
+LOG_LEVEL = 'ERROR' # Can be DEBUG, INFO, WARNING, ERROR, CRITICAL
 LOG_SELENIUM_LEVEL = ERROR
 LOG_TO_FILE = False
 LOG_TO_CONSOLE = False
@@ -20,6 +20,6 @@ JOB_MIN_APPLICATIONS = 1
 LLM_MODEL_TYPE = 'ollama'
 # LLM_MODEL = 'gemini-2.0-flash-exp'
 # LLM_MODEL = 'gemini-1.5-flash'
-LLM_MODEL = 'olmo2:13b'
+LLM_MODEL = 'qwen2.5:7b-instruct'
 # Only required for OLLAMA models
 LLM_API_URL = '127.0.0.1:11434'

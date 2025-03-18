@@ -4,7 +4,14 @@ from typing import Dict, List, Tuple, Optional
 import logging
 
 # Configure logging
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s - %(levelname)s - %(message)s")
+from config import LOG_LEVEL
+
+# Configure logging
+log_level = getattr(logging, LOG_LEVEL.upper(), logging.ERROR)
+logging.basicConfig(
+    level=log_level,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
 
 
 class StyleManager:

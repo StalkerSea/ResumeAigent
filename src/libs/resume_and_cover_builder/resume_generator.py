@@ -18,7 +18,7 @@ class ResumeGenerator:
     def set_resume_object(self, resume_object):
          self.resume_object = resume_object
          
-    def _create_resume(self, gpt_answerer: Any, style_path: str, job: Job):
+    def _create_resume(self, gpt_answerer: Any, style_path: str, job: Job = None):
         gpt_answerer.set_resume(self.resume_object)
         
         # Read the HTML template

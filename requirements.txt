@@ -1,5 +1,4 @@
 click
-git+https://github.com/feder-cr/lib_resume_builder_AIHawk.git
 httpx
 inputimeout
 jsonschema
@@ -30,3 +29,6 @@ pytest-mock
 pytest-cov
 undetected-chromedriver
 google-generativeai==0.7.2
+bs4
+inquirer
+pydantic[email]
