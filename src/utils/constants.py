@@ -3,12 +3,12 @@ DATE_MONTH = "month"
 DATE_WEEK = "week"
 DATE_24_HOURS = "24_hours"
 
-
 # constants used in application
 SECRETS_YAML = "secrets.yaml"
 WORK_PREFERENCES_YAML = "work_preferences.yaml"
 PLAIN_TEXT_RESUME_YAML = "plain_text_resume.yaml"
-LINKEDIN = "linkedin"
+POPULAR_BLUE_PORTAL = "linkedin"
+JOB_APPLICATION_DIR = "data_folder/output/"
 
 # String constants used in the application
 DEBUG = "DEBUG"

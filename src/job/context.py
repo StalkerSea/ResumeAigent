@@ -1,5 +1,5 @@
-from src.job import Job
-from src.job_application import JobApplication
+from src.job.job import Job
+from src.job.application import JobApplication
 
 
 from dataclasses import dataclass

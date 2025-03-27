@@ -1,4 +1,5 @@
 import base64
+import random
 import sys
 import time
 from pathlib import Path
@@ -8,18 +9,25 @@ import inquirer
 import yaml
 from selenium import webdriver
 import re
-from src.libs.resume_and_cover_builder import ResumeFacade, ResumeGenerator, StyleManager
+from src.libs.resume_and_cover_builder.resume_facade import ResumeFacade
+from src.libs.resume_and_cover_builder.resume_generator import ResumeGenerator
+from src.resume_builder.manager_facade import FacadeManager
+from src.resume_builder.style_manager import StyleManager
 from src.resume_schemas.resume import Resume
-from src.logging import logger
-from src.utils.chrome_utils import init_browser
+from src.job_portals.base_job_portal import get_job_portal
+import undetected_chromedriver as uc
+from selenium.common.exceptions import WebDriverException
+from src.job.application_profile import JobApplicationProfile
+from src.app_logging import logger
 from src.utils.constants import (
-    PLAIN_TEXT_RESUME_YAML,
-    SECRETS_YAML,
-    WORK_PREFERENCES_YAML,
+    POPULAR_BLUE_PORTAL, 
+    PLAIN_TEXT_RESUME_YAML, 
+    SECRETS_YAML, 
+    WORK_PREFERENCES_YAML
 )
-# from ai_hawk.bot_facade import AIHawkBotFacade
-# from ai_hawk.job_manager import AIHawkJobManager
-# from ai_hawk.llm.llm_manager import GPTAnswerer
+from src.job_portal_handler.bot_facade import HelperFacade
+from src.job_portal_handler.job_manager import JobManager
+from src.job_portal_handler.llm.llm_manager import GPTAnswerer
 
 
 class ConfigError(Exception):
@@ -212,6 +220,121 @@ class FileManager:
         return uploads
 
 
+def init_uc_browser() -> webdriver.Chrome:
+    try:
+        from src.utils.anti_detection import UserAgentRotator
+        ua_rotator = UserAgentRotator()
+        random_ua = ua_rotator.get_random_agent()
+        
+        options = uc.ChromeOptions()
+        
+        # Create user data directory if it doesn't exist
+        #user_data_dir = Path.home() / ".config" / "aihawk" / "chrome_data"
+        user_data_dir = Path(".config/autojobaigent/chrome_data")
+        user_data_dir.mkdir(parents=True, exist_ok=True)
+        
+        options.add_argument(f'--user-data-dir={user_data_dir}')
+        options.add_argument('--profile-directory=Default')
+        #options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--no-first-run')
+        options.add_argument('--no-service-autorun')
+        options.add_argument('--password-store=basic')
+        options.binary_location = "/Applications/Chromium.app/Contents/MacOS/Chromium"
+        
+        # Set a random user agent
+        options.add_argument(f'--user-agent={random_ua}')
+        
+        # Add some noise to browser fingerprint
+        width = random.randint(1024, 1920)
+        height = random.randint(800, 1080)
+        options.add_argument(f'--window-size={width},{height}')
+        
+        # Disable automation flags
+        options.add_argument('--disable-blink-features=AutomationControlled')
+        options.add_argument('--disable-features=IsolateOrigins,site-per-process')
+
+        # Add canvas fingerprint protection
+        options.add_argument("--disable-features=CanvasImageSmoothing")
+        
+        
+        driver = uc.Chrome(options=options)
+        
+        # Execute CDP commands to prevent detection
+        driver.execute_cdp_cmd('Network.setUserAgentOverride', {
+            "userAgent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
+        })
+        driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
+        
+        # Set random WebGL settings to prevent fingerprinting
+        driver.execute_cdp_cmd('Page.addScriptToEvaluateOnNewDocument', {
+            'source': '''
+            (function() {
+                // Modify WebGL behavior to add noise
+                const getParameter = WebGLRenderingContext.prototype.getParameter;
+                WebGLRenderingContext.prototype.getParameter = function(parameter) {
+                    // Add slight randomization to certain parameters
+                    if (parameter === 37445) {
+                        return 'Intel Inc.' + (Math.random() < 0.1 ? ' ' : '');
+                    }
+                    if (parameter === 37446) {
+                        return 'Intel' + (Math.random() < 0.1 ? ' HD Graphics' : ' Iris Pro Graphics');
+                    }
+                    return getParameter.apply(this, arguments);
+                };
+            })();
+            '''
+        })
+        return driver
+    except Exception as e:
+        logger.error(f"Browser initialization failed: {str(e)}")
+        raise RuntimeError(f"Failed to initialize browser: {str(e)}")
+
+
+def create_and_run_bot(parameters, llm_api_key):
+    try:
+        style_manager = StyleManager()
+        resume_generator = ResumeGenerator()
+        with open(
+            parameters["uploads"]["plainTextResume"], "r", encoding="utf-8"
+        ) as file:
+            plain_text_resume = file.read()
+        resume_object = Resume(plain_text_resume)
+        resume_generator_manager = FacadeManager(
+            llm_api_key,
+            style_manager,
+            resume_generator,
+            resume_object,
+            Path("data_folder/output"),
+        )
+
+        # Run the resume generator manager's functions to make a new resume for each job
+        resume_generator_manager.choose_style()
+        job_application_profile_object = JobApplicationProfile(plain_text_resume)
+
+        browser = init_uc_browser()
+        job_portal = get_job_portal(
+            driver=browser, portal_name=POPULAR_BLUE_PORTAL, parameters=parameters
+        )
+        login_component = job_portal.authenticator
+        apply_component = JobManager(job_portal)
+        gpt_answerer_component = GPTAnswerer(parameters, llm_api_key)
+        bot = HelperFacade(login_component, apply_component)
+        bot.set_job_application_profile_and_resume(
+            job_application_profile_object, resume_object
+        )
+        bot.set_gpt_answerer_and_resume_generator(
+            gpt_answerer_component, resume_generator_manager
+        )
+        bot.set_parameters(parameters, resume_object)
+        bot.start_login()
+        logger.info("Collecting suitable jobs")
+        bot.start_apply()
+    except WebDriverException as e:
+        logger.error(f"WebDriver error occurred: {e}")
+    except Exception as e:
+        raise RuntimeError(f"Error running the bot: {str(e)}")
+
+
 def create_cover_letter(parameters: dict, llm_api_key: str):
     """
     Logic to create a CV.
@@ -255,10 +378,7 @@ def create_cover_letter(parameters: dict, llm_api_key: str):
         job_url = answers.get('job_url')
         resume_generator = ResumeGenerator()
         resume_object = Resume(plain_text_resume)
-        #options = webdriver.ChromeOptions()
-        #options.add_argument('--headless')
-        #driver = init_browser(options=options)
-        driver = init_browser()
+        driver = init_uc_browser()
         resume_generator.set_resume_object(resume_object)
         
         # Create the ResumeFacade
@@ -353,7 +473,7 @@ def create_resume_pdf_tailored(parameters: dict, llm_api_key: str):
         
         resume_generator = ResumeGenerator()
         resume_object = Resume(plain_text_resume)
-        driver = init_browser()
+        driver = init_uc_browser()
         
         resume_generator.set_resume_object(resume_object)
         resume_facade = ResumeFacade(            
@@ -365,7 +485,10 @@ def create_resume_pdf_tailored(parameters: dict, llm_api_key: str):
         )
         resume_facade.set_driver(driver)
         resume_facade.link_to_job(job_url)
-        result_base64, suggested_name = resume_facade.util_create_resume_pdf_job_tailored()
+
+        # TODO: This doesn't work, fix!
+        return
+        #result_base64, suggested_name = create_resume_pdf_tailored()
 
         # Decodifica Base64 in dati binari
         try:
@@ -443,7 +566,7 @@ def create_resume_pdf(parameters: dict, llm_api_key: str):
         # Making it headless, as it just generates the html and converts it to PDF
         options = webdriver.ChromeOptions()
         options.add_argument('--headless')
-        driver = init_browser(options=options)
+        driver = init_uc_browser(options=options)
 
         resume_generator.set_resume_object(resume_object)
 
@@ -481,6 +604,107 @@ def create_resume_pdf(parameters: dict, llm_api_key: str):
         logger.exception(f"An error occurred while creating the CV: {e}")
         raise
 
+def create_resume_pdf_from_job_details(parameters: dict, llm_api_key: str, job_title: str, company_name: str, job_description: str):
+    """
+    Logic to create a CV tailored for a specific job without requiring a URL.
+    
+    Args:
+        parameters: Configuration parameters dictionary
+        llm_api_key: API key for language model
+        job_title: Title of the job
+        company_name: Name of the company
+        job_description: Full job description text
+    """
+    try:
+        logger.info(f"Generating a tailored resume for {job_title} at {company_name}")
+
+        # Load the plain text resume
+        with open(parameters["uploads"]["plainTextResume"], "r", encoding="utf-8") as file:
+            plain_text_resume = file.read()
+
+        # Initialize StyleManager
+        style_manager = StyleManager()
+        available_styles = style_manager.get_styles()
+
+        if not available_styles:
+            logger.warning("No styles available. Proceeding without style selection.")
+        else:
+            # Present style choices to the user
+            choices = style_manager.format_choices(available_styles)
+            questions = [
+                inquirer.List(
+                    "style",
+                    message="Select a style for the resume",
+                    choices=choices,
+                )
+            ]
+            style_answer = inquirer.prompt(questions)
+            if style_answer and "style" in style_answer:
+                selected_choice = style_answer["style"]
+                for style_name, (file_name, author_link) in available_styles.items():
+                    if selected_choice.startswith(style_name):
+                        style_manager.set_selected_style(style_name)
+                        logger.info(f"Selected style: {style_name}")
+                        break
+            else:
+                logger.warning("No style selected. Proceeding with default style.")
+
+        # Initialize the Resume Generator
+        resume_generator = ResumeGenerator()
+        resume_object = Resume(plain_text_resume)
+
+        # Making it headless, as it just generates the html and converts it to PDF
+        options = webdriver.ChromeOptions()
+        options.add_argument('--headless')
+        driver = init_uc_browser(options=options)
+
+        resume_generator.set_resume_object(resume_object)
+
+        # Create the ResumeFacade
+        resume_facade = ResumeFacade(
+            api_key=llm_api_key,
+            style_manager=style_manager,
+            resume_generator=resume_generator,
+            resume_object=resume_object,
+            output_path=Path("data_folder/output"),
+        )
+        resume_facade.set_driver(driver)
+        
+        # Generate tailored resume using the job details directly
+        result_base64, suggested_name = resume_facade.util_create_resume_from_description(
+            job_description, job_title, company_name
+        )
+
+        # Decode Base64 to binary data
+        try:
+            pdf_data = base64.b64decode(result_base64)
+        except base64.binascii.Error as e:
+            logger.error("Error decoding Base64: %s", e)
+            raise
+
+        # Create formatted company-position folder name
+        company_name_safe = re.sub(r'[^\w\s-]', '', company_name).strip()
+        position_name_safe = re.sub(r'[^\w\s-]', '', job_title).strip()
+        safe_folder_name = f"{company_name_safe}_{position_name_safe}".replace(' ', '_')
+        
+        # Define the output directory
+        output_dir = Path(parameters["outputFileDirectory"]) / safe_folder_name
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        # Write the PDF file
+        output_path = output_dir / "tailored_resume.pdf"
+        try:
+            with open(output_path, "wb") as file:
+                file.write(pdf_data)
+            logger.info(f"Tailored resume saved at: {output_path}")
+            return output_path
+        except IOError as e:
+            logger.error("Error writing file: %s", e)
+            raise
+    except Exception as e:
+        logger.exception(f"An error occurred while creating the tailored resume: {e}")
+        raise
+
 def format_execution_time(seconds: float) -> str:
     """Format execution time into hours, minutes, and seconds."""
     hours = int(seconds // 3600)
@@ -510,6 +734,10 @@ def handle_inquiries(selected_actions: List[str], parameters: dict, llm_api_key:
         if selected_actions:
             start_time = time.time()
             
+            if "Start job hunting" == selected_actions:
+                print("Crafting a standout professional resume for each job suitable...")
+                create_and_run_bot(parameters, llm_api_key)
+                
             if "Generate Resume" == selected_actions:
                 print("Crafting a standout professional resume...")
                 # Measure time it takes to generate the resume
@@ -546,6 +774,7 @@ def prompt_user_action() -> str:
                 'action',
                 message="Select the action you want to perform",
                 choices=[
+                    "Start job hunting",
                     "Generate Resume",
                     "Generate Resume Tailored for Job Description",
                     "Generate Tailored Cover Letter for Job Description",

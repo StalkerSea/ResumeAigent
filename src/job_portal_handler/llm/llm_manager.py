@@ -2,9 +2,8 @@ import json
 import os
 import re
 import textwrap
-import time
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, time
 from pathlib import Path
 from typing import Dict, List, Union
 
@@ -17,8 +16,7 @@ from langchain_core.prompt_values import StringPromptValue
 from langchain_core.prompts import ChatPromptTemplate
 from Levenshtein import distance
 
-from config import JOB_SUITABILITY_SCORE
-from src.libs.resume_and_cover_builder.llm import prompts
+import src.job_portal_handler.llm.prompts as prompts
 from src.utils.constants import (
     AVAILABILITY,
     CERTIFICATIONS,
@@ -61,6 +59,7 @@ from src.utils.constants import (
     SALARY_EXPECTATIONS,
     SELF_IDENTIFICATION,
     SYSTEM_FINGERPRINT,
+    TEXT,
     TIME,
     TOKEN_USAGE,
     TOTAL_COST,
@@ -74,10 +73,12 @@ import config as cfg
 
 load_dotenv()
 
+
 class AIModel(ABC):
     @abstractmethod
     def invoke(self, prompt: str) -> str:
         pass
+
 
 class OpenAIModel(AIModel):
     def __init__(self, api_key: str, llm_model: str):
@@ -159,6 +160,7 @@ class GeminiModel(AIModel):
         response = self.model.invoke(prompt)
         return response
 
+
 class HuggingFaceModel(AIModel):
     def __init__(self, api_key: str, llm_model: str):
         from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
@@ -174,6 +176,7 @@ class HuggingFaceModel(AIModel):
             f"Invoking Model from Hugging Face API. Response: {response}, Type: {type(response)}"
         )
         return response
+
 
 class AIAdapter:
     def __init__(self, config: dict, api_key: str):
@@ -205,6 +208,7 @@ class AIAdapter:
     def invoke(self, prompt: str) -> str:
         return self.model.invoke(prompt)
 
+
 class LLMLogger:
     def __init__(self, llm: Union[OpenAIModel, OllamaModel, ClaudeModel, GeminiModel]):
         self.llm = llm
@@ -217,7 +221,7 @@ class LLMLogger:
         logger.debug(f"Parsed reply received: {parsed_reply}")
 
         try:
-            calls_log = os.path.join(Path("data_folder/output"), "ai_calls.json")
+            calls_log = os.path.join(Path("data_folder/output"), "llm_calls.json")
             logger.debug(f"Logging path determined: {calls_log}")
         except Exception as e:
             logger.error(f"Error determining the log path: {str(e)}")
@@ -272,7 +276,7 @@ class LLMLogger:
             raise
 
         try:
-            model_name = parsed_reply[RESPONSE_METADATA][MODEL_NAME]
+            model_name = f"{cfg.LLM_MODEL_TYPE}:{cfg.LLM_MODEL}"
             logger.debug(f"Model name: {model_name}")
         except KeyError as e:
             logger.error(f"KeyError in response_metadata: {str(e)}")
@@ -308,13 +312,31 @@ class LLMLogger:
             raise
 
         try:
-            with open(calls_log, "a", encoding="utf-8") as f:
-                json_string = json.dumps(log_entry, ensure_ascii=False, indent=4)
-                f.write(json_string + "\n")
+            # First, read existing content or create empty array
+            if os.path.exists(calls_log) and os.path.getsize(calls_log) > 0:
+                with open(calls_log, 'r', encoding='utf-8') as f:
+                    try:
+                        entries = json.load(f)
+                        if not isinstance(entries, list):
+                            entries = [entries]
+                    except json.JSONDecodeError:
+                        # If file exists but isn't valid JSON array
+                        entries = []
+            else:
+                entries = []
+        
+            # Add new entry
+            entries.append(log_entry)
+        
+            # Write all entries back to file
+            with open(calls_log, 'w', encoding='utf-8') as f:
+                json.dump(entries, ensure_ascii=False, indent=4, fp=f)
                 logger.debug(f"Log entry written to file: {calls_log}")
+        
         except Exception as e:
             logger.error(f"Error writing log entry to file: {str(e)}")
             raise
+
 
 class LoggerChatModel:
     def __init__(self, llm: Union[OpenAIModel, OllamaModel, ClaudeModel, GeminiModel]):
@@ -449,8 +471,10 @@ class LoggerChatModel:
             logger.error(f"Unexpected error while parsing LLM result: {str(e)}")
             raise
 
+
 class GPTAnswerer:
     def __init__(self, config, llm_api_key):
+        self.api_key = llm_api_key
         self.ai_adapter = AIAdapter(config, llm_api_key)
         self.llm_cheap = LoggerChatModel(self.ai_adapter)
 
@@ -499,13 +523,13 @@ class GPTAnswerer:
     
     def summarize_job_description(self, text: str) -> str:
         logger.debug(f"Summarizing job description: {text}")
-        # strings.summarize_prompt_template = self._preprocess_template_string(
-        #     strings.summarize_prompt_template
-        # )
-        # prompt = ChatPromptTemplate.from_template(strings.summarize_prompt_template)
-        # chain = prompt | self.llm_cheap | StrOutputParser()
-        # output = chain.invoke({"text": text})
-        output = text[:100]
+        prompts.summarize_prompt_template = self._preprocess_template_string(
+            prompts.summarize_prompt_template
+        )
+        prompt = ChatPromptTemplate.from_template(prompts.summarize_prompt_template)
+        chain = prompt | self.llm_cheap | StrOutputParser()
+        raw_output = chain.invoke({TEXT: text})
+        output = self._clean_llm_output(raw_output)
         logger.debug(f"Summary generated: {output}")
         return output
 
@@ -674,7 +698,7 @@ class GPTAnswerer:
         else:
             return "resume"
 
-    def is_job_suitable(self):
+    def is_job_suitable(self) -> bool:
         logger.info("Checking if job is suitable")
         prompt = ChatPromptTemplate.from_template(prompts.is_relavant_position_template)
         chain = prompt | self.llm_cheap | StrOutputParser()
@@ -685,7 +709,6 @@ class GPTAnswerer:
             }
         )
         output = self._clean_llm_output(raw_output)
-        logger.debug(f"Job suitability output: {output}")
 
         try:
             score = re.search(r"Score:\s*(\d+)", output, re.IGNORECASE).group(1)
@@ -695,6 +718,6 @@ class GPTAnswerer:
             return True
 
         logger.info(f"Job suitability score: {score}")
-        if int(score) < JOB_SUITABILITY_SCORE:
+        if int(score) < cfg.JOB_SUITABILITY_SCORE:
             logger.debug(f"Job is not suitable: {reasoning}")
-        return int(score) >= JOB_SUITABILITY_SCORE
+        return int(score) >= cfg.JOB_SUITABILITY_SCORE

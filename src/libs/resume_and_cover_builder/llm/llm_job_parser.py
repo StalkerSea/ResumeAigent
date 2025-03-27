@@ -9,20 +9,15 @@ from src.libs.resume_and_cover_builder.llm.llm_generate_resume import LLMModelFa
 from src.libs.resume_and_cover_builder.utils import LoggerChatModel
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from dotenv import load_dotenv
 from loguru import logger
 from pathlib import Path
 from langchain_text_splitters import TokenTextSplitter
 from langchain_community.vectorstores import FAISS
 from langchain_community.document_loaders import TextLoader
-# from requests.exceptions import HTTPError as HTTPStatusError  # HTTP error handling
 
 # Embeddings
 from langchain_ollama import OllamaEmbeddings
 from langchain_community.embeddings import OpenAIEmbeddings, HuggingFaceEmbeddings
-
-# Load environment variables from the .env file
-load_dotenv()
 
 # Configure the log file
 log_folder = 'log/resume/gpt_resume'
