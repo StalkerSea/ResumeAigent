@@ -1,9 +1,7 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List, Dict, Any, Optional, Union
 import yaml
 from pydantic import BaseModel, EmailStr, HttpUrl, Field
-
-
 
 class PersonalInformation(BaseModel):
     name: Optional[str]

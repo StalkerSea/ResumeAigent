@@ -283,9 +283,9 @@ class LLMResumer:
             }
         else: 
             input_data = {
-                "skills": skills,
-                "interests": interests,
-                "languages": languages,
+                "skills": self.resume.skills,
+                "interests": self.resume.interests,
+                "languages": self.resume.languages,
             }
         output = chain.invoke(input_data)
         

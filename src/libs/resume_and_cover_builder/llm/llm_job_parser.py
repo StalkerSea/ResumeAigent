@@ -5,7 +5,6 @@ import textwrap
 import re
 from typing import Dict, Optional  # For email validation
 import numpy as np
-import faiss
 from src.libs.resume_and_cover_builder.llm.llm_generate_resume import LLMModelFactory
 from src.libs.resume_and_cover_builder.utils import LoggerChatModel
 from langchain_core.output_parsers import StrOutputParser
@@ -15,7 +14,6 @@ from loguru import logger
 from pathlib import Path
 from langchain_text_splitters import TokenTextSplitter
 from langchain_community.vectorstores import FAISS
-from lib_resume_builder_AIHawk.config import global_config
 from langchain_community.document_loaders import TextLoader
 # from requests.exceptions import HTTPError as HTTPStatusError  # HTTP error handling
 
@@ -112,7 +110,7 @@ class LLMParser:
                 
                 # Create FAISS index directly
                 dimension = len(embeddings[0])
-                index = faiss.IndexFlatL2(dimension)
+                index = FAISS.IndexFlatL2(dimension)
                 index.add(np.array(embeddings).astype('float32'))
                 
                 # Store the index and texts

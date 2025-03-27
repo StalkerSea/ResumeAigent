@@ -1,23 +1,17 @@
 import base64
 import sys
+import time
 from pathlib import Path
 import traceback
-from typing import List, Optional, Tuple, Dict
-
-import click
+from typing import List, Tuple, Dict
 import inquirer
 import yaml
 from selenium import webdriver
-from selenium.common.exceptions import WebDriverException
-from selenium.webdriver.chrome.service import Service as ChromeService
-from webdriver_manager.chrome import ChromeDriverManager
 import re
 from src.libs.resume_and_cover_builder import ResumeFacade, ResumeGenerator, StyleManager
-from src.resume_schemas.job_application_profile import JobApplicationProfile
 from src.resume_schemas.resume import Resume
 from src.logging import logger
 from src.utils.chrome_utils import init_browser
-from datetime import datetime
 from src.utils.constants import (
     PLAIN_TEXT_RESUME_YAML,
     SECRETS_YAML,
@@ -487,6 +481,21 @@ def create_resume_pdf(parameters: dict, llm_api_key: str):
         logger.exception(f"An error occurred while creating the CV: {e}")
         raise
 
+def format_execution_time(seconds: float) -> str:
+    """Format execution time into hours, minutes, and seconds."""
+    hours = int(seconds // 3600)
+    minutes = int((seconds % 3600) // 60)
+    remaining_seconds = seconds % 60
+
+    time_parts = []
+    if hours > 0:
+        time_parts.append(f"{hours} {'hour' if hours == 1 else 'hours'}")
+    if minutes > 0:
+        time_parts.append(f"{minutes} {'minute' if minutes == 1 else 'minutes'}")
+    if remaining_seconds > 0 or not time_parts:  # Include seconds if no larger units or if there are remaining seconds
+        time_parts.append(f"{remaining_seconds:.2f} seconds")
+
+    return " ".join(time_parts)
         
 def handle_inquiries(selected_actions: List[str], parameters: dict, llm_api_key: str):
     """
@@ -499,18 +508,26 @@ def handle_inquiries(selected_actions: List[str], parameters: dict, llm_api_key:
     logger.info(f"Handling inquiries with selected actions: {selected_actions}")
     try:
         if selected_actions:
+            start_time = time.time()
+            
             if "Generate Resume" == selected_actions:
-                logger.info("Crafting a standout professional resume...")
+                print("Crafting a standout professional resume...")
+                # Measure time it takes to generate the resume
                 create_resume_pdf(parameters, llm_api_key)
                 
             if "Generate Resume Tailored for Job Description" == selected_actions:
-                logger.info("Customizing your resume to enhance your job application...")
+                print("Customizing your resume to enhance your job application...")
+                # Measure time it takes to generate the resume
                 create_resume_pdf_tailored(parameters, llm_api_key)
                 
             if "Generate Tailored Cover Letter for Job Description" == selected_actions:
-                logger.info("Designing a personalized cover letter to enhance your job application...")
+                print("Designing a personalized cover letter to enhance your job application...")
+                # Measure time it takes to generate the resume
                 create_cover_letter(parameters, llm_api_key)
 
+            end_time = time.time()
+            execution_time = end_time - start_time
+            print(f"\nTask completed in {format_execution_time(execution_time)}")
         else:
             logger.warning("No actions selected. Nothing to execute.")
     except Exception as e:
@@ -546,7 +563,7 @@ def prompt_user_action() -> str:
 
 
 def main():
-    """Main entry point for the AIHawk Job Application Bot."""
+    """Main entry point for the ResumeAigent Job Application Bot."""
     try:
         # Define and validate the data folder
         data_folder = Path("data_folder")
@@ -569,12 +586,14 @@ def main():
         logger.debug("About to handle inquiries")
         handle_inquiries(selected_actions, config, llm_api_key)
         logger.debug("Completed handling inquiries")
+        print('Completed handling inquiries')
+        return 0
 
     except ConfigError as ce:
         logger.error(f"Configuration error: {ce}")
         logger.error(
             "Refer to the configuration guide for troubleshooting: "
-            "https://github.com/feder-cr/Auto_Jobs_Applier_AIHawk?tab=readme-ov-file#configuration"
+            "https://github.com/StalkerSea/ResumeAigent?tab=readme-ov-file#configuration"
         )
         return 1
     except FileNotFoundError as fnf:
