@@ -17,8 +17,8 @@ Act as an HR expert and resume writer with a specialization in creating ATS-frie
 1. **Institution Name and Location**: Specify the university or educational institution’s name and location.
 2. **Degree and Field of Study**: Clearly indicate the degree earned and the field of study.
 3. **Grade**: Include your Grade if it is strong and relevant.
-4. **Relevant Coursework**: List key courses with their grades to showcase your academic strengths.
 
+- Feel free to improve the data and make it more professional and better-looking to improve the chances of hiring, but do not add any information that is not provided.
 - **My information:**  
   {education_details}
 """+ prompt_education_template
@@ -32,6 +32,7 @@ Act as an HR expert and resume writer with a specialization in creating ATS-frie
 3. **Dates of Employment**: Include the start and end dates of your employment.
 4. **Responsibilities and Achievements**: Describe your key responsibilities and notable achievements, emphasizing measurable results and specific contributions.
 
+- Feel free to improve the data and make it more professional and better-looking to improve the chances of hiring, but do not add any information that is not provided.
 - **My information:**  
   {experience_details}
 """+ prompt_working_experience_template
@@ -44,6 +45,7 @@ Act as an HR expert and resume writer with a specialization in creating ATS-frie
 2. **Project Details**: Describe any notable recognition or achievements related to the project, such as GitHub stars or community feedback.
 3. **Technical Contributions**: Highlight your specific contributions and the technologies used in the project. 
 
+- Feel free to improve the data and make it more professional and better-looking to improve the chances of hiring, but do not add any information that is not provided.
 - **My information:**  
   {projects}
 """+ prompt_projects_template
@@ -55,6 +57,7 @@ Act as an HR expert and resume writer with a specialization in creating ATS-frie
 1. **Award or Recognition**: Clearly state the name of the award, recognition, scholarship, or honor.
 2. **Description**: Provide a brief description of the achievement and its relevance to your career or academic journey.
 
+- Feel free to improve the data and make it more professional and better-looking to improve the chances of hiring, but do not add any information that is not provided.
 - **My information:**  
   {achievements}
 """+ prompt_achievements_template
@@ -85,6 +88,7 @@ Act as an HR expert and resume writer with a specialization in creating ATS-frie
 2. **Specific Skills**: List the specific skills or technologies within each category.
 3. **Proficiency and Experience**: Briefly describe your experience and proficiency level.
 
+- Feel free to improve the data and make it more professional and better-looking to improve the chances of hiring, but do not add any information that is not provided.
 - **My information:**  
   {languages}
   {interests}

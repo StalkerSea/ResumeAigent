@@ -25,7 +25,6 @@ class EducationDetails(BaseModel):
     final_evaluation_grade: Optional[str]
     start_date: Optional[str]
     year_of_completion: Optional[int]
-    exam: Optional[Union[List[Dict[str, str]], Dict[str, str]]] = None
 
 
 class ExperienceDetails(BaseModel):
@@ -97,21 +96,10 @@ class Resume(BaseModel):
     interests: Optional[List[str]] = None
     skills: set[str] = Field(default_factory=set)
 
-    @staticmethod
-    def normalize_exam_format(exam):
-        if isinstance(exam, dict):
-            return [{k: v} for k, v in exam.items()]
-        return exam
-
     def __init__(self, yaml_str: str):
         try:
             # Parse the YAML string
             data = yaml.safe_load(yaml_str)
-
-            if 'education_details' in data:
-                for ed in data['education_details']:
-                    if 'exam' in ed:
-                        ed['exam'] = self.normalize_exam_format(ed['exam'])
 
             # Create an instance of Resume from the parsed data
             super().__init__(**data)
@@ -135,7 +123,6 @@ class Resume(BaseModel):
         education_list = []
         for edu in data:
             try:
-                exams = [Exam(name=k, grade=v) for k, v in edu.get('exam', {}).items()]
                 education = EducationDetails(
                     education_level=edu.get('education_level'),
                     institution=edu.get('institution'),
@@ -143,7 +130,6 @@ class Resume(BaseModel):
                     final_evaluation_grade=edu.get('final_evaluation_grade'),
                     start_date=edu.get('start_date'),
                     year_of_completion=edu.get('year_of_completion'),
-                    exam=exams
                 )
                 education_list.append(education)
             except KeyError as e:
@@ -184,12 +170,6 @@ class Resume(BaseModel):
             except Exception as e:
                 raise Exception(f"Unexpected error in Experience processing: {e}") from e
         return experience_list
-
-
-@dataclass
-class Exam:
-    name: str
-    grade: str
 
 @dataclass
 class Responsibility:

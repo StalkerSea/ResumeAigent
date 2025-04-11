@@ -261,11 +261,6 @@ class LLMResumer:
                 if exp.skills_acquired:
                     self.resume.skills.update(exp.skills_acquired)
 
-        if self.resume.education_details:
-            for edu in self.resume.education_details:
-                if edu.exam:
-                    for exam in edu.exam:
-                        self.resume.skills.update(exam.keys())
         prompt = ChatPromptTemplate.from_template(additional_skills_prompt_template)
         chain = prompt | self.llm_cheap | StrOutputParser()
 

@@ -11,7 +11,6 @@ personal_information:
   email: "hi@gmail.com"
   github: "https://github.com/lol"
   linkedin: "https://www.linkedin.com/in/thezucc/"
-  
 
 education_details:
   - education_level: "Master's Degree"
@@ -20,13 +19,6 @@ education_details:
     final_evaluation_grade: "4.0"
     year_of_completion: "2023"
     start_date: "2022"
-    additional_info:
-      exam:
-        Algorithms: "A"
-        Linear Algebra: "A"
-        Database Systems: "A"
-        Operating Systems: "A-"
-        Web Development: "A"
 
 experience_details:
   - position: "X"
@@ -72,8 +64,6 @@ projects:
   - name: "X"
     description: "Y blah blah blah "
     link: "https://github.com/haveagoodday"
-
-
 
 achievements:
   - name: "Employee of the Month"
@@ -130,7 +120,6 @@ legal_authorization:
   requires_uk_visa: "No"
   legally_allowed_to_work_in_uk: "Yes"
   requires_uk_sponsorship: "No"
-
 
 work_preferences:
   remote_work: "Yes"

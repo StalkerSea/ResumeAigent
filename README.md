@@ -171,7 +171,6 @@ Each section has specific fields to fill out:
     - **start_date**: The start year of your studies.
     - **graduation_year**: The year you graduated.
     - **field_of_study**: The major or focus area of your studies.
-    - **exam**: A list of courses or subjects taken along with their respective grades.
 
   - Example:
 
@@ -183,12 +182,6 @@ Each section has specific fields to fill out:
       final_evaluation_grade: "4/4"
       start_date: "2021"
       year_of_completion: "2023"
-      exam:
-        Algorithms: "A"
-        Data Structures: "B+"
-        Database Systems: "A"
-        Operating Systems: "A-"
-        Web Development: "B"
   ```
 
 - `experience_details:`
