@@ -20,6 +20,8 @@ LLM_MODEL_TYPE = 'gemini'
 #LLM_MODEL_TYPE = 'ollama'
 LLM_MODEL = 'gemini-2.0-flash-thinking-exp-01-21'
 #LLM_MODEL = 'gemini-1.5-flash'
+#LLM_MODEL = 'gemma3:4b-it-fp16'
 #LLM_MODEL = 'qwen2.5:7b-instruct'
+#LLM_MODEL = 'llama3:8b'
 # Only required for OLLAMA models
 LLM_API_URL = '127.0.0.1:11434'

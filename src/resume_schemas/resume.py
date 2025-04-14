@@ -21,6 +21,7 @@ class PersonalInformation(BaseModel):
 class EducationDetails(BaseModel):
     education_level: Optional[str]
     institution: Optional[str]
+    location: Optional[str]
     field_of_study: Optional[str]
     final_evaluation_grade: Optional[str]
     start_date: Optional[str]
@@ -126,6 +127,7 @@ class Resume(BaseModel):
                 education = EducationDetails(
                     education_level=edu.get('education_level'),
                     institution=edu.get('institution'),
+                    location=edu.get('location'),
                     field_of_study=edu.get('field_of_study'),
                     final_evaluation_grade=edu.get('final_evaluation_grade'),
                     start_date=edu.get('start_date'),

@@ -75,13 +75,6 @@ prompt_education_template = """
           <span class="entry-title">[Degree] in [Field of Study] | Grade: [Your Grade]</span>
           <span class="entry-year">[Start Year] – [End Year]  </span>
       </div>
-      <ul class="compact-list">
-          <li>[Course Name] → Grade: [Grade]</li>
-          <li>[Course Name] → Grade: [Grade]</li>
-          <li>[Course Name] → Grade: [Grade]</li>
-          <li>[Course Name] → Grade: [Grade]</li>
-          <li>[Course Name] → Grade: [Grade]</li>
-      </ul>
     </div>
 </section>
 ```
