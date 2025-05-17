@@ -5,7 +5,7 @@ Create a class that generates a resume based on a resume and a resume template.
 import os
 import textwrap
 from src.job import Job
-from src.libs.resume_and_cover_builder.utils import LoggerChatModel
+from src.utils.utils import LoggerChatModel
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI

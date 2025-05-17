@@ -9,7 +9,7 @@ from src.libs.resume_and_cover_builder.llm.llm_generate_resume import LLMResumer
 from src.libs.resume_and_cover_builder.llm.llm_generate_resume_from_job import LLMResumeJobDescription
 from src.libs.resume_and_cover_builder.llm.llm_generate_cover_letter_from_job import LLMCoverLetterJobDescription
 from .module_loader import load_module
-from .config import global_config
+from ....settings.config import global_config
 
 class ResumeGenerator:
     def __init__(self):

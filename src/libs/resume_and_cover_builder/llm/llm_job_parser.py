@@ -6,7 +6,7 @@ import re
 from typing import Dict, Optional  # For email validation
 import numpy as np
 from src.libs.resume_and_cover_builder.llm.llm_generate_resume import LLMModelFactory
-from src.libs.resume_and_cover_builder.utils import LoggerChatModel
+from src.utils.utils import LoggerChatModel
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv

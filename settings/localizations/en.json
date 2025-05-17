@@ -1,0 +1,34 @@
+{
+  "menu": {
+    "select_action": "Select the action you want to perform",
+    "thank_you": "Thank you for using our service! This task took {time}.",
+    "generate": {
+      "resume": "Generate Resume",
+      "resume_tailored": "Generate Resume Tailored for Job Description",
+      "cover_letter": "Generate Tailored Cover Letter for Job Description"
+    }
+  },
+  "settings": {
+    "prompt": "Settings Menu",
+    "title": "Select the settings you want to modify",
+    "return": "Return to Main Menu",
+    "language": {
+      "select": "Select a language",
+      "title": "Change Language",
+      "prompt": "Select the language you want to use",
+      "changed": "Language changed to English"
+    }
+  },
+  "no_selection": "No selection made",
+  "returning_to_main_menu": "Returning to the main menu...",
+  "time": {
+    "second": "second",
+    "seconds": "seconds",
+    "minute": "minute",
+    "minutes": "minutes",
+    "hour": "hour",
+    "hours": "hours",
+    "day": "day",
+    "days": "days"
+  }
+}

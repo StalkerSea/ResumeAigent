@@ -1,9 +1,10 @@
 """
-This module contains utility functions for the Resume and Cover Letter Builder service.
+This module contains utility functions for the LLM services.
 """
 
-# app/libs/resume_and_cover_builder/utils.py
+# src/utils/utils.py
 import json
+import traceback
 from bs4 import BeautifulSoup
 import openai
 import time
@@ -12,13 +13,26 @@ from typing import Dict, List
 from langchain_core.messages.ai import AIMessage
 from langchain_core.prompt_values import StringPromptValue
 from langchain_openai import ChatOpenAI
-from .config import global_config
+from settings.config import global_config
 from loguru import logger
 from requests.exceptions import HTTPError as HTTPStatusError
 
 # Extra utils
 from src.utils.constants import JOB_SELECTORS
 
+# Constants for log fields
+MODEL = "model"
+TIME = "timestamp"
+PROMPTS = "prompts"
+REPLIES = "replies"
+TOTAL_TOKENS = "total_tokens"
+INPUT_TOKENS = "input_tokens"
+OUTPUT_TOKENS = "output_tokens"
+TOTAL_COST = "total_cost"
+USAGE_METADATA = "usage_metadata"
+RESPONSE_METADATA = "response_metadata"
+MODEL_NAME = "model_name"
+CONTENT = "content"
 
 class LLMLogger:
 
@@ -27,55 +41,119 @@ class LLMLogger:
 
     @staticmethod
     def log_request(prompts, parsed_reply: Dict[str, Dict]):
-        calls_log = global_config.LOG_OUTPUT_FILE_PATH / "ai_calls.json"
-        if isinstance(prompts, StringPromptValue):
-            prompts = prompts.text
-        elif isinstance(prompts, Dict):
-            # Convert prompts to a dictionary if they are not in the expected format
-            prompts = {
-                f"prompt_{i+1}": prompt.content
-                for i, prompt in enumerate(prompts.messages)
+        """
+        Log LLM request details to a JSON file atomically with detailed logging.
+        
+        Args:
+            prompts: The prompts sent to the LLM
+            parsed_reply (Dict[str, Dict]): The parsed reply from the LLM
+            
+        Raises:
+            Exception: If there's an error during logging process
+        """
+        logger.debug("Starting log_request method")
+        logger.debug(f"Prompts received: {prompts}")
+        logger.debug(f"Parsed reply received: {parsed_reply}")
+
+        try:
+            calls_log = global_config.LOG_OUTPUT_FILE_PATH / "llm_calls.json"
+            logger.debug(f"Logging path determined: {calls_log}")
+            
+            # Read existing logs
+            logs = []
+            if calls_log.exists():
+                with open(calls_log, "r", encoding="utf-8") as f:
+                    try:
+                        content = f.read().strip()
+                        # Remove trailing comma if it exists
+                        if content.endswith(','):
+                            content = content[:-1]
+                        # Parse existing logs
+                        logs = json.loads(f'[{content}]' if content else '[]')
+                        logger.debug(f"Existing logs loaded: {len(logs)} entries")
+                    except json.JSONDecodeError:
+                        logger.warning("Corrupted log file found, starting fresh")
+
+            # Format prompts with type checking
+            try:
+                if isinstance(prompts, StringPromptValue):
+                    logger.debug("Prompts are of type StringPromptValue")
+                    formatted_prompts = prompts.text
+                elif isinstance(prompts, dict):
+                    logger.debug("Prompts are of type Dict")
+                    formatted_prompts = {
+                        f"prompt_{i+1}": prompt.content
+                        for i, prompt in enumerate(prompts.get('messages', []))
+                    }
+                else:
+                    logger.debug("Prompts are of unknown type, attempting default conversion")
+                    formatted_prompts = {
+                        f"prompt_{i+1}": prompt.content
+                        for i, prompt in enumerate(
+                            prompts.messages if hasattr(prompts, 'messages') else [prompts]
+                        )
+                    }
+                logger.debug(f"Formatted prompts: {formatted_prompts}")
+            except Exception as e:
+                logger.error(f"Error formatting prompts: {e}")
+                raise
+
+            # Extract and validate metadata
+            try:
+                token_usage = parsed_reply[USAGE_METADATA]
+                output_tokens = token_usage[OUTPUT_TOKENS]
+                input_tokens = token_usage[INPUT_TOKENS]
+                total_tokens = token_usage[TOTAL_TOKENS]
+                model_name = parsed_reply[RESPONSE_METADATA][MODEL_NAME]
+                logger.debug(f"Token usage - Input: {input_tokens}, Output: {output_tokens}, Total: {total_tokens}")
+                logger.debug(f"Model name: {model_name}")
+            except KeyError as e:
+                logger.error(f"Missing required metadata field: {e}")
+                raise
+
+            # Calculate costs
+            try:
+                prompt_price_per_token = 0.00000015
+                completion_price_per_token = 0.0000006
+                total_cost = (input_tokens * prompt_price_per_token) + (output_tokens * completion_price_per_token)
+                logger.debug(f"Total cost calculated: {total_cost}")
+            except Exception as e:
+                logger.error(f"Error calculating costs: {e}")
+                raise
+
+            # Create log entry
+            log_entry = {
+                TIME: datetime.now().isoformat(),
+                MODEL: model_name,
+                PROMPTS: formatted_prompts,
+                REPLIES: parsed_reply[CONTENT],
+                TOTAL_TOKENS: total_tokens,
+                INPUT_TOKENS: input_tokens,
+                OUTPUT_TOKENS: output_tokens,
+                TOTAL_COST: round(total_cost, 6)
             }
-        else:
-            prompts = {
-                f"prompt_{i+1}": prompt.content
-                for i, prompt in enumerate(prompts.messages)
-            }
+            logger.debug(f"Log entry created: {log_entry}")
 
-        current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            # Append new log
+            logs.append(log_entry)
 
-        # Extract token usage details from the response
-        token_usage = parsed_reply["usage_metadata"]
-        output_tokens = token_usage["output_tokens"]
-        input_tokens = token_usage["input_tokens"]
-        total_tokens = token_usage["total_tokens"]
-
-        # Extract model details from the response
-        model_name = parsed_reply["response_metadata"]["model_name"]
-        prompt_price_per_token = 0.00000015
-        completion_price_per_token = 0.0000006
-
-        # Calculate the total cost of the API call
-        total_cost = (input_tokens * prompt_price_per_token) + (
-            output_tokens * completion_price_per_token
-        )
-
-        # Create a log entry with all relevant information
-        log_entry = {
-            "model": model_name,
-            "time": current_time,
-            "prompts": prompts,
-            "replies": parsed_reply["content"],  # Response content
-            "total_tokens": total_tokens,
-            "input_tokens": input_tokens,
-            "output_tokens": output_tokens,
-            "total_cost": total_cost,
-        }
-
-        # Write the log entry to the log file in JSON format
-        with open(calls_log, "a", encoding="utf-8") as f:
-            json_string = json.dumps(log_entry, ensure_ascii=False, indent=4)
-            f.write(json_string + "\n")
+            # Write atomically using a temporary file
+            temp_log = calls_log.with_suffix('.tmp')
+            with open(temp_log, "w", encoding="utf-8") as f:
+                # Wrap the JSON entries in an array
+                f.write('[\n')
+                json_strings = [json.dumps(entry, ensure_ascii=False, indent=2) for entry in logs]
+                f.write(',\n'.join(json_strings))
+                f.write('\n]')
+            
+            # Atomic rename
+            temp_log.replace(calls_log)
+            logger.debug("Log entry written successfully")
+            
+        except Exception as e:
+            logger.error(f"Failed to log LLM request: {e}")
+            logger.debug(traceback.format_exc())
+            # Don't raise the exception - logging should not break the main functionality
 
 class LoggerChatModel:
 

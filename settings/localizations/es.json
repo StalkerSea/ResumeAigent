@@ -1,0 +1,34 @@
+{
+  "menu": {
+    "select_action": "Seleccione la acción que desea realizar",
+    "thank_you": "¡Gracias por usar nuestro servicio! Esta tarea tomó {time}.",
+    "generate": {
+      "resume": "Generar Currículum",
+      "resume_tailored": "Generar Currículum Adaptado a la Descripción del Puesto",
+      "cover_letter": "Generar Carta de Presentación Adaptada a la Descripción del Puesto"
+    }
+  },
+  "settings": {
+    "prompt": "Menú de Configuración",
+    "title": "Seleccione la configuración que desea modificar",
+    "return": "Volver al Menú Principal",
+    "language": {
+      "select": "Seleccionar un idioma",
+      "title": "Cambiar Idioma",
+      "prompt": "Seleccione el idioma que desea usar",
+      "changed": "El idioma se cambió a Español"
+    }
+  },
+  "no_selection": "Ninguna selección realizada",
+  "returning_to_main_menu": "Volviendo al menú principal...",
+  "time": {
+    "second": "segundo",
+    "seconds": "segundos",
+    "minute": "minuto",
+    "minutes": "minutos",
+    "hour": "hora",
+    "hours": "horas",
+    "day": "día",
+    "days": "días"
+  }
+}

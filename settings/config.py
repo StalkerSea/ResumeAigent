@@ -1,7 +1,7 @@
 """
 This module is used to store the global configuration of the application.
 """
-# app/libs/resume_and_cover_builder/config.py
+# settings/config.py
 from pathlib import Path
 
 class GlobalConfig:

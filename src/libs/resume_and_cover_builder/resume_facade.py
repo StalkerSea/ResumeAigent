@@ -10,9 +10,9 @@ from loguru import logger
 
 from src.libs.resume_and_cover_builder.llm.llm_job_parser import LLMParser
 from src.job import Job
-from src.libs.resume_and_cover_builder.utils import Utils
+from src.utils.utils import Utils
 from src.utils.chrome_utils import HTML_to_PDF
-from .config import global_config
+from ....settings.config import global_config
 from config import LLM_MODEL_TYPE, LLM_MODEL
 
 class ResumeFacade:
