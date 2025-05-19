@@ -161,30 +161,30 @@ Each section has specific fields to fill out:
     linkedin: "https://www.linkedin.com/in/janedoe/"
   ```
 
-- `education_details:`
+- `education:`
 
   - This section outlines your academic background, including degrees earned and relevant coursework.
 
     - **degree**: The type of degree obtained (e.g., Bachelor's Degree, Master's Degree).
     - **university**: The name of the university or institution where you studied.
-    - **final_evaluation_grade**: Your Grade Point Average or equivalent measure of academic performance.
-    - **start_date**: The start year of your studies.
-    - **graduation_year**: The year you graduated.
     - **field_of_study**: The major or focus area of your studies.
+    - **final_evaluation_grade**: Your Grade Point Average or equivalent measure of academic performance.
+    - **start_year**: The start year of your studies.
+    - **end_year**: The year you graduated.
 
   - Example:
 
   ```yaml
-  education_details:
+  education:
     - education_level: "Bachelor's Degree"
       institution: "University of Example"
       field_of_study: "Software Engineering"
       final_evaluation_grade: "4/4"
-      start_date: "2021"
-      year_of_completion: "2023"
+      start_year: "2021"
+      end_year: "2023"
   ```
 
-- `experience_details:`
+- `experience:`
 
   - This section details your work experience, including job roles, companies, and key responsibilities.
 
@@ -199,7 +199,7 @@ Each section has specific fields to fill out:
   - Example:
 
   ```yaml
-  experience_details:
+  experience:
     - position: "Software Developer"
       company: "Tech Innovations Inc."
       employment_period: "06/2021 - Present"

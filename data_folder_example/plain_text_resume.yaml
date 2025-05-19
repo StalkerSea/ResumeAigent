@@ -12,15 +12,15 @@ personal_information:
   github: "https://github.com/lol"
   linkedin: "https://www.linkedin.com/in/thezucc/"
 
-education_details:
+education:
   - education_level: "Master's Degree"
     institution: "Bob academy"
     field_of_study: "Bobs Engineering"
     final_evaluation_grade: "4.0"
-    year_of_completion: "2023"
-    start_date: "2022"
+    start_year: "2022"
+    end_year: "2023"
 
-experience_details:
+experience:
   - position: "X"
     company: "Y."
     employment_period: "06/2019 - Present"

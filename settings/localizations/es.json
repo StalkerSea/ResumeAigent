@@ -1,6 +1,8 @@
 {
   "menu": {
     "select_action": "Seleccione la acción que desea realizar",
+    "select_style": "Selecciona un estilo para el currículum",
+    "enter_job_url": "Introduzca la URL de la descripción del puesto",
     "thank_you": "¡Gracias por usar nuestro servicio! Esta tarea tomó {time}.",
     "generate": {
       "resume": "Generar Currículum",
@@ -30,5 +32,166 @@
     "hours": "horas",
     "day": "día",
     "days": "días"
+  },
+  "system_prompts": {
+    "default": "Soy un asistente útil. Traduce todo el contenido al español excepto los nombres propios como nombres de instituciones, empresas y ubicaciones.",
+    "resume": "Soy un experto en RRHH y redactor de currículums especializado en CVs optimizados para ATS. Traduce todo el contenido al español excepto los nombres propios como nombres de instituciones, empresas y ubicaciones. Los nombres genéricos de proyectos, descripciones y responsabilidades DEBEN traducirse.",
+    "cover_letter": "Soy un experto en RRHH y redactor de cartas de presentación especializado en solicitudes de empleo. Traduce todo el contenido al español excepto los nombres propios como nombres de instituciones, empresas y ubicaciones. Los nombres genéricos de proyectos, descripciones y responsabilidades DEBEN traducirse.",
+    "job_analysis": "Soy un experto en RRHH especializado en análisis del mercado laboral y orientación profesional. Traduce todo el contenido al español excepto los nombres propios como nombres de instituciones, empresas y ubicaciones. Los nombres genéricos de proyectos, descripciones y responsabilidades DEBEN traducirse."
+  },
+  "prompts": {
+    "resume": {
+      "common": {
+        "improvement_note": "Siéntete libre de mejorar los datos para hacerlos más profesionales y atractivos para aumentar las posibilidades de contratación, pero no agregues información que no se haya proporcionado.",
+        "omit_note": "Si algún campo no está proporcionado (es decir, `None`), omite esas secciones."
+      },
+      "header": {
+        "title": "Crear un encabezado profesional y pulido para el currículum",
+        "requirements": [
+          "Información de Contacto: Incluir nombre completo, ciudad y país, número de teléfono, correo electrónico, perfil de LinkedIn y perfil de GitHub",
+          "Formato: Asegurar que los detalles de contacto se presenten de forma clara y sean fáciles de leer"
+        ]
+      },
+      "education": {
+        "title": "Articular los antecedentes educativos para un currículum",
+        "requirements": [
+          "Nombre y Ubicación de la Institución: Especificar el nombre y la ubicación de la universidad o institución educativa",
+          "Título y Campo de Estudio: Indicar claramente el título obtenido y el campo de estudio",
+          "Calificación: Incluir tu calificación si es buena y relevante"
+        ]
+      },
+      "experience": {
+        "title": "Detallar la experiencia laboral para un currículum",
+        "requirements": [
+          "Nombre y Ubicación de la Empresa: Proporcionar el nombre de la empresa y su ubicación",
+          "Título del Puesto: Indicar claramente tu título del puesto",
+          "Fechas de Empleo: Incluir las fechas de inicio y fin del empleo",
+          "Responsabilidades y Logros: Describir tus responsabilidades clave y logros notables, enfatizando resultados medibles y contribuciones específicas"
+        ]
+      },
+      "projects": {
+        "title": "Destacar proyectos personales notables",
+        "requirements": [
+          "Nombre y Enlace del Proyecto: Proporcionar el nombre del proyecto e incluir un enlace al repositorio de GitHub o página del proyecto",
+          "Detalles del Proyecto: Describir cualquier reconocimiento o logro relacionado con el proyecto",
+          "Contribuciones Técnicas: Destacar tus contribuciones específicas y las tecnologías utilizadas"
+        ]
+      },
+      "achievements": {
+        "title": "Enumerar logros significativos",
+        "requirements": [
+          "Premio o Reconocimiento: Indicar claramente el nombre del premio, reconocimiento, beca u honor",
+          "Descripción: Proporcionar una breve descripción del logro y su relevancia"
+        ]
+      },
+      "certifications": {
+        "title": "Enumerar certificaciones significativas",
+        "requirements": [
+          "Nombre de la Certificación: Indicar claramente el nombre de la certificación",
+          "Descripción: Proporcionar una breve descripción de la certificación y su relevancia"
+        ]
+      },
+      "skills": {
+        "title": "Enumerar habilidades adicionales relevantes para el trabajo",
+        "requirements": [
+          "Categoría de Habilidad: Indicar claramente la categoría o tipo de habilidad",
+          "Habilidades Específicas: Enumerar las habilidades o tecnologías específicas dentro de cada categoría",
+          "Experiencia y Nivel: Describir brevemente tu experiencia y nivel de competencia"
+        ]
+      }
+    },
+    "cover_letter": {
+      "common": {
+        "format_note": "Escribe una carta de presentación breve e impactante de no más de tres párrafos en un tono profesional pero conversacional.",
+        "structure_note": "La carta debe estar formateada en párrafos y no debe incluir saludo ni firma."
+      },
+      "main": {
+        "title": "Crear una carta de presentación profesional basada en la descripción del trabajo y el currículum",
+        "requirements": [
+          "Análisis: Identificar calificaciones y requisitos clave de la descripción del trabajo",
+          "Introducción: Presentar al candidato de manera sucinta, alineando objetivos profesionales con el rol",
+          "Cuerpo: Destacar habilidades y experiencias relevantes que coincidan con las demandas del trabajo",
+          "Enfoque en la Empresa: Hacer referencia a aspectos notables de la empresa que resuenen con objetivos profesionales",
+          "Cierre: Hacer una declaración firme sobre la idoneidad para el puesto y expresar deseo de discutir más"
+        ],
+        "rules": [
+          "Mantener conciso y atractivo",
+          "Abordar el rol del trabajo directamente",
+          "Hacer referencia a características de la empresa",
+          "Evitar adornos innecesarios",
+          "No incluir introducciones ni explicaciones"
+        ]
+      }
+    },
+    "job_tailoring": {
+      "analysis": {
+        "title": "Analizar requisitos del trabajo y emparejar con el perfil del candidato",
+        "sections": [
+          "Habilidades Técnicas: Enumerar todas las habilidades técnicas específicas requeridas",
+          "Habilidades Blandas: Identificar habilidades blandas necesarias",
+          "Calificaciones Educativas: Especificar calificaciones esenciales",
+          "Experiencia Profesional: Describir experiencias laborales relevantes",
+          "Evolución del Rol: Analizar tendencias futuras y requisitos"
+        ],
+        "rules": [
+          "Eliminar texto genérico",
+          "Incluir solo información relevante",
+          "Ordenar por relevancia para los requisitos del trabajo",
+          "Usar terminología clara y estándar de la industria",
+          "No agregar ni inferir información no proporcionada"
+        ]
+      }
+    }
+  },
+  "templates": {
+    "html": {
+      "cover_letter": {
+        "structure": "<section id=\"cover-letter\">\n  <div style=\"display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;\">\n    <div>\n      <p>[Tu Nombre]</p>\n      <p>[Tu Dirección]</p>\n      <p>[Ciudad, Estado CP]</p>\n      <p>[Tu Email]</p>\n      <p>[Tu Teléfono]</p>\n    </div>\n    <div style=\"text-align: right;\">\n      <p>[Nombre de la Empresa]</p>\n    </div>\n  </div>\n  <div>\n    <p>Estimado [Equipo Receptor],</p>\n    <p>[Párrafo de apertura]</p>\n    <p>[Párrafos del cuerpo]</p>\n    <p>[Párrafo de cierre]</p>\n    <p>Atentamente,</p>\n    <p>[Tu Nombre]</p>\n    <p>[Fecha]</p>\n  </div>\n</section>",
+        "placeholders": {
+          "opening": "[Párrafo de apertura: Preséntate y menciona el puesto al que aplicas.]",
+          "body": "[Párrafos del cuerpo: Destaca tus calificaciones, experiencias y cómo se alinean con los requisitos del trabajo.]",
+          "closing": "[Párrafo de cierre: Expresa tu entusiasmo por el puesto y agradece la consideración.]",
+          "contact": {
+            "name": "[Tu Nombre]",
+            "address": "[Tu Dirección]",
+            "location": "[Ciudad, Estado CP]",
+            "email": "[Tu Email]",
+            "phone": "[Tu Teléfono]"
+          },
+          "recipient": {
+            "company": "[Nombre de la Empresa]"
+          },
+          "greeting": "Estimado [Equipo Receptor],",
+          "signature": "Atentamente,",
+          "date": "[Fecha]"
+        }
+      },
+      "resume": {
+        "header": {
+          "structure": "<header>\n  <h1>{name}</h1>\n  <div class=\"contact-info\">\n    <p class=\"fas fa-map-marker-alt\"><span>{location}</span></p>\n    <p class=\"fas fa-phone\"><span>{phone}</span></p>\n    <p class=\"fas fa-envelope\"><span>{email}</span></p>\n    <p class=\"fab fa-linkedin\"><a href=\"{linkedin}\">LinkedIn</a></p>\n    <p class=\"fab fa-github\"><a href=\"{github}\">GitHub</a></p>\n  </div>\n</header>"
+        },
+        "education": {
+          "structure": "<section id=\"education\">\n  <h2>Educación</h2>\n  <div class=\"entry\">\n    <div class=\"entry-header\">\n      <span class=\"entry-name\">{university}</span>\n      <span class=\"entry-location\">{location}</span>\n    </div>\n    <div class=\"entry-details\">\n      <span class=\"entry-title\">{degree} en {field} | Nota: {grade}</span>\n      <span class=\"entry-year\">{start_year} – {end_year}</span>\n    </div>\n  </div>\n</section>"
+        },
+        "experience": {
+          "structure": "<section id=\"work-experience\">\n  <h2>Experiencia Laboral</h2>\n  <div class=\"entry\">\n    <div class=\"entry-header\">\n      <span class=\"entry-name\">{company}</span>\n      <span class=\"entry-location\">{location}</span>\n    </div>\n    <div class=\"entry-details\">\n      <span class=\"entry-title\">{position}</span>\n      <span class=\"entry-year\">{start_date} – {end_date}</span>\n    </div>\n    <ul class=\"compact-list\">{responsibilities}</ul>\n  </div>\n</section>"
+        },
+        "projects": {
+          "structure": "<section id=\"side-projects\">\n  <h2>Proyectos</h2>\n  <div class=\"entry\">\n    <div class=\"entry-header\">\n      <span class=\"entry-name\"><i class=\"fab fa-github\"></i> <a href=\"{repo_url}\">{project_name}</a></span>\n    </div>\n    <ul class=\"compact-list\">{achievements}</ul>\n  </div>\n</section>"
+        },
+        "achievements": {
+          "structure": "<section id=\"achievements\">\n  <h2>Logros</h2>\n  <ul class=\"compact-list\">\n    <li><strong>{award_name}:</strong> {description}</li>\n  </ul>\n</section>"
+        },
+        "certifications": {
+          "structure": "<section id=\"certifications\">\n  <h2>Certificaciones</h2>\n  <ul class=\"compact-list\">\n    <li><strong>{cert_name}:</strong> {description}</li>\n  </ul>\n</section>"
+        },
+        "additional_skills": {
+          "structure": "<section id=\"skills-languages\">\n  <h2>Habilidades Adicionales</h2>\n  <div class=\"two-column\">\n    <ul class=\"compact-list\">{technical_skills}</ul>\n    <ul class=\"compact-list\">{other_skills}\n      <li><strong>Idiomas:</strong> {languages}</li>\n    </ul>\n  </div>\n</section>"
+        },
+        "relevant_skills": {
+          "structure": "<section id=\"skills-languages\">\n  <h2>Habilidades Adicionales</h2>\n  <div class=\"two-column\">\n    <ul class=\"compact-list\">\n      <li><strong>Habilidades Técnicas</strong></li>{technical_skills}\n    </ul>\n    <ul class=\"compact-list\">\n      <li><strong>Conocimientos del Dominio y Habilidades Blandas</strong></li>{domain_skills}\n      <li><strong>Idiomas:</strong> {languages}</li>\n    </ul>\n  </div>\n</section>"
+        }
+      }
+    }
   }
 }

@@ -8,9 +8,6 @@ class LocalizationManager:
     LANGUAGE_CODES = {
         "English": "en",
         "Español": "es",
-        "Français": "fr",
-        "Deutsch": "de",
-        "Italiano": "it"
     }
 
     def __new__(cls):

@@ -12,7 +12,7 @@ from src.libs.resume_and_cover_builder.llm.llm_job_parser import LLMParser
 from src.job import Job
 from src.utils.utils import Utils
 from src.utils.chrome_utils import HTML_to_PDF
-from ....settings.config import global_config
+from settings.config import global_config
 from config import LLM_MODEL_TYPE, LLM_MODEL
 
 class ResumeFacade:
@@ -27,10 +27,6 @@ class ResumeFacade:
             output_path (str): The path to the log file.
         """
         lib_directory = Path(__file__).resolve().parent
-        global_config.STRINGS_MODULE_RESUME_PATH = lib_directory / "resume_prompt/strings.py"
-        global_config.STRINGS_MODULE_RESUME_JOB_DESCRIPTION_PATH = lib_directory / "resume_job_description_prompt/strings.py"
-        global_config.STRINGS_MODULE_COVER_LETTER_JOB_DESCRIPTION_PATH = lib_directory / "cover_letter_prompt/strings.py"
-        global_config.STRINGS_MODULE_NAME = "strings"
         global_config.STYLES_DIRECTORY = lib_directory / "resume_style"
         global_config.LOG_OUTPUT_FILE_PATH = output_path
         global_config.API_KEY = api_key

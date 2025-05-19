@@ -17,6 +17,25 @@ class PersonalInformation(BaseModel):
     github: Optional[HttpUrl] = None
     linkedin: Optional[HttpUrl] = None
 
+    def get(self, field: str, default: str = "") -> str:
+        """
+        Get a field value with a default if not present.
+        Handles composite fields like 'location' or 'full_name'.
+        """
+        if field == "location":
+            return f"{self.city or ''}, {self.country or ''}".strip()
+        elif field == "name":
+            return f"{self.name or ''} {self.surname or ''}".strip()
+        elif field == "phone":
+            return f"{self.phone_prefix or ''}{self.phone or ''}".strip()
+        elif field == "github":
+            return str(self.github) if self.github else ""
+        elif field == "linkedin":
+            return str(self.linkedin) if self.linkedin else ""
+        elif hasattr(self, field):
+            return str(getattr(self, field) or default)
+        return default
+
 
 class EducationDetails(BaseModel):
     education_level: Optional[str]
@@ -24,8 +43,24 @@ class EducationDetails(BaseModel):
     location: Optional[str]
     field_of_study: Optional[str]
     final_evaluation_grade: Optional[str]
-    start_date: Optional[str]
-    year_of_completion: Optional[int]
+    start_year: Optional[str]
+    end_year: Optional[int]
+
+    def get(self, field: str, default: str = "") -> str:
+        """Get a field value with a default if not present."""
+        if field == "university":
+            return str(self.institution or default)
+        elif field == "field":
+            return str(self.field_of_study or default)
+        elif field == "grade":
+            return str(self.final_evaluation_grade or default)
+        elif field == "start_year":
+            return str(self.start_year or default)
+        elif field == "end_year":
+            return str(self.end_year or default)
+        elif hasattr(self, field):
+            return str(getattr(self, field) or default)
+        return default
 
 
 class ExperienceDetails(BaseModel):
@@ -37,26 +72,77 @@ class ExperienceDetails(BaseModel):
     key_responsibilities: Optional[List[Dict[str, str]]] = None
     skills_acquired: Optional[List[str]] = None
 
+    def get(self, field: str, default: str = "") -> str:
+        """Get a field value with a default if not present."""
+        if field == "position":
+            return str(self.position or default)
+        elif field == "start_date":
+            # Assuming employment_period is in format "MM-YYYY - MM-YYYY"
+            return self.employment_period.split(" - ")[0] if self.employment_period else default
+        elif field == "end_date":
+            return self.employment_period.split(" - ")[1] if self.employment_period else default
+        elif field == "responsibilities":
+            # Changed from 'description' to 'responsibility' to match YAML structure
+            return "\n".join(f"<li>{r['responsibility']}</li>" for r in (self.key_responsibilities or []))
+        elif hasattr(self, field):
+            return str(getattr(self, field) or default)
+        return default
+
 
 class Project(BaseModel):
     name: Optional[str]
     description: Optional[str]
     link: Optional[HttpUrl] = None
 
+    def get(self, field: str, default: str = "") -> str:
+        """Get a field value with a default if not present."""
+        if field == "project_name":
+            return str(self.name or default)
+        elif field == "repo_url":
+            return str(self.link) if self.link else default
+        elif field == "achievements":
+            return f"<li>{self.description}</li>" if self.description else default
+        elif hasattr(self, field):
+            return str(getattr(self, field) or default)
+        return default
+
 
 class Achievement(BaseModel):
     name: Optional[str]
     description: Optional[str]
 
+    def get(self, field: str, default: str = "") -> str:
+        """Get a field value with a default if not present."""
+        if field == "award_name":
+            return str(self.name or default)
+        elif hasattr(self, field):
+            return str(getattr(self, field) or default)
+        return default
 
 class Certifications(BaseModel):
     name: Optional[str]
     description: Optional[str]
 
+    def get(self, field: str, default: str = "") -> str:
+        """Get a field value with a default if not present."""
+        if field == "cert_name":
+            return str(self.name or default)
+        elif hasattr(self, field):
+            return str(getattr(self, field) or default)
+        return default
+
 
 class Language(BaseModel):
     language: Optional[str]
     proficiency: Optional[str]
+
+    def get(self, field: str, default: str = "") -> str:
+        """Get a field value with a default if not present."""
+        if field == "full_description":
+            return f"{self.language} - {self.proficiency}" if self.language and self.proficiency else default
+        elif hasattr(self, field):
+            return str(getattr(self, field) or default)
+        return default
 
 
 class Availability(BaseModel):
@@ -88,8 +174,8 @@ class LegalAuthorization(BaseModel):
 
 class Resume(BaseModel):
     personal_information: Optional[PersonalInformation]
-    education_details: Optional[List[EducationDetails]] = None
-    experience_details: Optional[List[ExperienceDetails]] = None
+    education: Optional[List[EducationDetails]] = None
+    experience: Optional[List[ExperienceDetails]] = None
     projects: Optional[List[Project]] = None
     achievements: Optional[List[Achievement]] = None
     certifications: Optional[List[Certifications]] = None
@@ -120,7 +206,7 @@ class Resume(BaseModel):
         except Exception as e:
             raise Exception(f"Unexpected error in PersonalInformation processing: {e}") from e
 
-    def _process_education_details(self, data: List[Dict[str, Any]]) -> List[EducationDetails]:
+    def _process_education(self, data: List[Dict[str, Any]]) -> List[EducationDetails]:
         education_list = []
         for edu in data:
             try:
@@ -130,8 +216,8 @@ class Resume(BaseModel):
                     location=edu.get('location'),
                     field_of_study=edu.get('field_of_study'),
                     final_evaluation_grade=edu.get('final_evaluation_grade'),
-                    start_date=edu.get('start_date'),
-                    year_of_completion=edu.get('year_of_completion'),
+                    start_year=edu.get('start_year'),
+                    end_year=edu.get('end_year'),
                 )
                 education_list.append(education)
             except KeyError as e:
@@ -144,7 +230,7 @@ class Resume(BaseModel):
                 raise Exception(f"Unexpected error in Education processing: {e}") from e
         return education_list
 
-    def _process_experience_details(self, data: List[Dict[str, Any]]) -> List[ExperienceDetails]:
+    def _process_experience(self, data: List[Dict[str, Any]]) -> List[ExperienceDetails]:
         experience_list = []
         for exp in data:
             try:

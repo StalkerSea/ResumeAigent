@@ -29,7 +29,7 @@ personal_information:
       email,
     ]
 
-education_details:
+education:
   type: array
   items:
     type: object
@@ -41,7 +41,7 @@ education_details:
       field_of_study: { type: string }
     required: [degree, university, gpa, graduation_year, field_of_study]
 
-experience_details:
+experience:
   type: array
   items:
     type: object

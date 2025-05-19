@@ -53,7 +53,7 @@ class LLMResumeJobDescription(LLMResumer):
             str: The generated education section.
         """
         return super().generate_education_section(data={
-            "education_details": self.resume.education_details,
+            "education": self.resume.education,
             "job_description": self.job_description
         })
 
@@ -64,7 +64,7 @@ class LLMResumeJobDescription(LLMResumer):
             str: The generated work experience section.
         """
         return super().generate_work_experience_section(data={
-            "experience_details": self.resume.experience_details,
+            "experience": self.resume.experience,
             "job_description": self.job_description
         })
 

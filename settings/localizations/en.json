@@ -1,6 +1,8 @@
 {
   "menu": {
     "select_action": "Select the action you want to perform",
+    "select_style": "Select a style for the resume",
+    "enter_job_url": "Please enter the URL of the job description",
     "thank_you": "Thank you for using our service! This task took {time}.",
     "generate": {
       "resume": "Generate Resume",
@@ -30,5 +32,166 @@
     "hours": "hours",
     "day": "day",
     "days": "days"
+  },
+  "system_prompts": {
+    "default": "I am a helpful assistant. Translates all content into English except for proper names such as names of institutions, companies and locations.",
+    "resume": "I am an HR expert and resume writer specialized in ATS optimized CVs. Translate all content into Spanish except proper names such as names of institutions, companies and locations. Generic project names, descriptions and responsibilities MUST be translated.",
+    "cover_letter": "I am an HR expert and cover letter writer specializing in job applications. Translate all content into Spanish except for proper names such as names of institutions, companies and locations. Generic project names, descriptions, and responsibilities MUST be translated.",
+    "job_analysis": "I am an HR expert specialized in labor market analysis and career guidance. Translate all content into English except for proper names such as names of institutions, companies and locations. Generic project names, descriptions and responsibilities MUST be translated"
+  },
+  "prompts": {
+    "resume": {
+      "common": {
+        "improvement_note": "Feel free to improve the data and make it more professional and better-looking to improve the chances of hiring, but do not add any information that is not provided.",
+        "omit_note": "If any fields are not provided (i.e., `None`), omit those sections."
+      },
+      "header": {
+        "title": "Create a professional and polished header for the resume",
+        "requirements": [
+          "Contact Information: Include full name, city and country, phone number, email address, LinkedIn profile, and GitHub profile",
+          "Formatting: Ensure the contact details are presented clearly and are easy to read"
+        ]
+      },
+      "education": {
+        "title": "Articulate the educational background for a resume",
+        "requirements": [
+          "Institution Name and Location: Specify the university or educational institution's name and location",
+          "Degree and Field of Study: Clearly indicate the degree earned and the field of study",
+          "Grade: Include your Grade if it is strong and relevant"
+        ]
+      },
+      "experience": {
+        "title": "Detail the work experience for a resume",
+        "requirements": [
+          "Company Name and Location: Provide the name of the company and its location",
+          "Job Title: Clearly state your job title",
+          "Dates of Employment: Include the start and end dates of your employment",
+          "Responsibilities and Achievements: Describe your key responsibilities and notable achievements, emphasizing measurable results and specific contributions."
+        ]
+      },
+      "projects": {
+        "title": "Highlight notable side projects",
+        "requirements": [
+          "Project Name and Link: Provide the name of the project and include a link to the GitHub repository or project page",
+          "Project Details: Describe any notable recognition or achievements related to the project",
+          "Technical Contributions: Highlight your specific contributions and the technologies used in the project"
+        ]
+      },
+      "achievements": {
+        "title": "List significant achievements",
+        "requirements": [
+          "Award or Recognition: Clearly state the name of the award, recognition, scholarship, or honor",
+          "Description: Provide a brief description of the achievement and its relevance"
+        ]
+      },
+      "certifications": {
+        "title": "List significant certifications",
+        "requirements": [
+          "Certification Name: Clearly state the name of the certification",
+          "Description: Provide a brief description of the certification and its relevance"
+        ]
+      },
+      "skills": {
+        "title": "List additional skills relevant to the job",
+        "requirements": [
+          "Skill Category: Clearly state the category or type of skill",
+          "Specific Skills: List the specific skills or technologies within each category",
+          "Proficiency and Experience: Briefly describe your experience and proficiency level"
+        ]
+      }
+    },
+    "cover_letter": {
+      "common": {
+        "format_note": "Write a brief and impactful cover letter no longer than three paragraphs in a professional, yet conversational tone.",
+        "structure_note": "The letter should be formatted into paragraphs and should not include a greeting or signature."
+      },
+      "main": {
+        "title": "Create a professional cover letter based on the provided job description and resume",
+        "requirements": [
+          "Analysis: Identify key qualifications and requirements from the job description",
+          "Introduction: Introduce the candidate succinctly, aligning career objectives with the role",
+          "Body: Highlight relevant skills and experiences that match job demands, using specific examples",
+          "Company Focus: Reference notable aspects of the company that resonate with professional goals",
+          "Closing: Make a strong statement about fit for the position and express desire to discuss further"
+        ],
+        "rules": [
+          "Keep it concise and engaging",
+          "Address job role directly",
+          "Reference company characteristics",
+          "Avoid unnecessary embellishments",
+          "Do not include any introductions or explanations"
+        ]
+      }
+    },
+    "job_tailoring": {
+      "analysis": {
+        "title": "Analyze job requirements and match with candidate profile",
+        "sections": [
+          "Technical Skills: List all specific technical skills required",
+          "Soft Skills: Identify necessary soft skills",
+          "Educational Qualifications: Specify essential qualifications",
+          "Professional Experience: Describe relevant work experiences",
+          "Role Evolution: Analyze future trends and requirements"
+        ],
+        "rules": [
+          "Remove boilerplate text",
+          "Include only relevant information",
+          "Order by relevance to job requirements",
+          "Use clear, industry-standard terminology",
+          "Do not add or infer information not provided"
+        ]
+      }
+    }
+  },
+  "templates": {
+    "html": {
+      "cover_letter": {
+        "structure": "<section id=\"cover-letter\">\n  <div style=\"display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;\">\n    <div>\n      <p>[Your Name]</p>\n      <p>[Your Address]</p>\n      <p>[City, State ZIP]</p>\n      <p>[Your Email]</p>\n      <p>[Your Phone Number]</p>\n    </div>\n    <div style=\"text-align: right;\">\n      <p>[Company Name]</p>\n    </div>\n  </div>\n  <div>\n    <p>Dear [Recipient Team],</p>\n    <p>[Opening paragraph]</p>\n    <p>[Body paragraphs]</p>\n    <p>[Closing paragraph]</p>\n    <p>Sincerely,</p>\n    <p>[Your Name]</p>\n    <p>[Date]</p>\n  </div>\n</section>",
+        "placeholders": {
+          "opening": "[Opening paragraph: Introduce yourself and state the position you are applying for.]",
+          "body": "[Body paragraphs: Highlight your qualifications, experiences, and how they align with the job requirements.]",
+          "closing": "[Closing paragraph: Express your enthusiasm for the position and thank the recipient for their consideration.]",
+          "contact": {
+            "name": "[Your Name]",
+            "address": "[Your Address]",
+            "location": "[City, State ZIP]",
+            "email": "[Your Email]",
+            "phone": "[Your Phone Number]"
+          },
+          "recipient": {
+            "company": "[Company Name]"
+          },
+          "greeting": "Dear [Recipient Team],",
+          "signature": "Sincerely,",
+          "date": "[Date]"
+        }
+      },
+      "resume": {
+        "header": {
+          "structure": "<header>\n  <h1>{name}</h1>\n  <div class=\"contact-info\">\n    <p class=\"fas fa-map-marker-alt\"><span>{location}</span></p>\n    <p class=\"fas fa-phone\"><span>{phone}</span></p>\n    <p class=\"fas fa-envelope\"><span>{email}</span></p>\n    <p class=\"fab fa-linkedin\"><a href=\"{linkedin}\">LinkedIn</a></p>\n    <p class=\"fab fa-github\"><a href=\"{github}\">GitHub</a></p>\n  </div>\n</header>"
+        },
+        "education": {
+          "structure": "<section id=\"education\">\n  <h2>Education</h2>\n  <div class=\"entry\">\n    <div class=\"entry-header\">\n      <span class=\"entry-name\">{university}</span>\n      <span class=\"entry-location\">{location}</span>\n    </div>\n    <div class=\"entry-details\">\n      <span class=\"entry-title\">{degree} in {field} | Grade: {grade}</span>\n      <span class=\"entry-year\">{start_year} - {end_year}</span>\n    </div>\n  </div>\n</section>"
+        },
+        "experience": {
+          "structure": "<section id=\"work-experience\">\n  <h2>Work Experience</h2>\n  <div class=\"entry\">\n    <div class=\"entry-header\">\n      <span class=\"entry-name\">{company}</span>\n      <span class=\"entry-location\">{location}</span>\n    </div>\n    <div class=\"entry-details\">\n      <span class=\"entry-title\">{position}</span>\n      <span class=\"entry-year\">{start_date} - {end_date}</span>\n    </div>\n    <ul class=\"compact-list\">{responsibilities}</ul>\n  </div>\n</section>"
+        },
+        "projects": {
+          "structure": "<section id=\"side-projects\">\n  <h2>Side Projects</h2>\n  <div class=\"entry\">\n    <div class=\"entry-header\">\n      <span class=\"entry-name\"><i class=\"fab fa-github\"></i> <a href=\"{repo_url}\">{project_name}</a></span>\n    </div>\n    <ul class=\"compact-list\">{achievements}</ul>\n  </div>\n</section>"
+        },
+        "achievements": {
+          "structure": "<section id=\"achievements\">\n  <h2>Achievements</h2>\n  <ul class=\"compact-list\">\n    <li><strong>{award_name}:</strong> {description}</li>\n  </ul>\n</section>"
+        },
+        "certifications": {
+          "structure": "<section id=\"certifications\">\n  <h2>Certifications</h2>\n  <ul class=\"compact-list\">\n    <li><strong>{cert_name}:</strong> {description}</li>\n  </ul>\n</section>"
+        },
+        "additional_skills": {
+          "structure": "<section id=\"skills-languages\">\n  <h2>Additional Skills</h2>\n  <div class=\"two-column\">\n    <ul class=\"compact-list\">{technical_skills}</ul>\n    <ul class=\"compact-list\">{other_skills}\n      <li><strong>Languages:</strong> {languages}</li>\n    </ul>\n  </div>\n</section>"
+        },
+        "relevant_skills": {
+          "structure": "<section id=\"skills-languages\">\n  <h2>Additional Skills</h2>\n  <div class=\"two-column\">\n    <ul class=\"compact-list\">\n      <li><strong>Technical Skills</strong></li>{technical_skills}\n    </ul>\n    <ul class=\"compact-list\">\n      <li><strong>Domain Knowledge & Soft Skills</strong></li>{domain_skills}\n      <li><strong>Languages:</strong> {languages}</li>\n    </ul>\n  </div>\n</section>"
+        }
+      }
+    }
   }
 }

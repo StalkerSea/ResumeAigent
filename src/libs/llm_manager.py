@@ -9,11 +9,11 @@ from dotenv import load_dotenv
 from langchain_core.messages import BaseMessage
 from langchain_core.messages.ai import AIMessage
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompt_values import StringPromptValue
 from langchain_core.prompts import ChatPromptTemplate
 from Levenshtein import distance
 
 from config import JOB_SUITABILITY_SCORE
+from settings.localizations.manager import LocalizationManager
 from src.libs.resume_and_cover_builder.llm import prompts
 from src.utils.constants import (
     AVAILABILITY,
@@ -45,9 +45,7 @@ from src.utils.constants import (
     PERSONAL_INFORMATION,
     PHRASE,
     PROJECTS,
-    PROMPTS,
     QUESTION,
-    REPLIES,
     RESPONSE_METADATA,
     RESUME,
     RESUME_EDUCATIONS,
@@ -57,9 +55,7 @@ from src.utils.constants import (
     SALARY_EXPECTATIONS,
     SELF_IDENTIFICATION,
     SYSTEM_FINGERPRINT,
-    TIME,
     TOKEN_USAGE,
-    TOTAL_COST,
     TOTAL_TOKENS,
     USAGE_METADATA,
     WORK_PREFERENCES,
@@ -72,16 +68,28 @@ from src.utils.utils import LLMLogger
 load_dotenv()
 
 class AIModel(ABC):
+
+    def __init__(self):
+        self.localization = LocalizationManager()
+    
+    def get_system_prompt(self, prompt_type: str = "default") -> str:
+        """Get localized system prompt."""
+        return self.localization.get_string(f"system_prompts.{prompt_type}")
+    
     @abstractmethod
     def invoke(self, prompt: str) -> str:
         pass
 
 class OpenAIModel(AIModel):
     def __init__(self, api_key: str, llm_model: str):
+        super().__init__()
         from langchain_openai import ChatOpenAI
 
         self.model = ChatOpenAI(
-            model_name=llm_model, openai_api_key=api_key, temperature=0.4
+            model_name=llm_model,
+            openai_api_key=api_key,
+            temperature=0.4,
+            system_message=self.get_system_prompt("resume")
         )
 
     def invoke(self, prompt: str) -> BaseMessage:
@@ -92,9 +100,15 @@ class OpenAIModel(AIModel):
 
 class ClaudeModel(AIModel):
     def __init__(self, api_key: str, llm_model: str):
+        super().__init__()
         from langchain_anthropic import ChatAnthropic
 
-        self.model = ChatAnthropic(model=llm_model, api_key=api_key, temperature=0.4)
+        self.model = ChatAnthropic(
+            model=llm_model,
+            api_key=api_key,
+            temperature=0.4,
+            system_message=self.get_system_prompt("resume")
+        )
 
     def invoke(self, prompt: str) -> BaseMessage:
         response = self.model.invoke(prompt)
@@ -104,22 +118,60 @@ class ClaudeModel(AIModel):
 
 class OllamaModel(AIModel):
     def __init__(self, llm_model: str, llm_api_url: str):
+        super().__init__()
         from langchain_ollama import ChatOllama
 
-        if len(llm_api_url) > 0:
+        # Check if we're using a Qwen model
+        self.is_qwen = llm_model.startswith("qwen")
+        
+        # Get localized system prompt
+        system_prompt = self.get_system_prompt("resume")
+        
+        # For Qwen models, set system message to control thinking mode
+        model_kwargs = {
+            "model": llm_model,
+            # Add /no_think to system message if thinking is disabled
+            "system": f"/no_think\n{system_prompt}" if self.is_qwen and not cfg.THINKING else system_prompt,
+        }
+
+        if llm_api_url:
             logger.debug(f"Using Ollama with API URL: {llm_api_url}")
-            self.model = ChatOllama(model=llm_model, base_url=llm_api_url)
-        else:
-            self.model = ChatOllama(model=llm_model)
+            model_kwargs["base_url"] = llm_api_url
+            
+        self.model = ChatOllama(**model_kwargs)
+
+    def _clean_thinking_tags(self, text: str) -> str:
+        """Remove thinking tags and their content from the response."""
+        import re
+        # Remove everything between <think> and </think> tags
+        cleaned = re.sub(r'<think>.*?</think>', '', text, flags=re.DOTALL)
+        # Remove any remaining tags
+        cleaned = re.sub(r'<[^>]+>', '', cleaned)
+        # Clean up extra whitespace
+        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
+        return cleaned
 
     def invoke(self, prompt: str) -> BaseMessage:
+        """Invoke the model with optional thinking control."""
+        logger.debug(f"Invoking Qwen model with thinking={'enabled' if cfg.THINKING else 'disabled'}")
+        
         response = self.model.invoke(prompt)
+        if hasattr(response, 'content'):
+            # Always clean thinking tags from response
+            response.content = self._clean_thinking_tags(response.content)
         return response
 
 class PerplexityModel(AIModel):
     def __init__(self, api_key: str, llm_model: str):
+        super().__init__()
         from langchain_community.chat_models import ChatPerplexity
-        self.model = ChatPerplexity(model=llm_model, api_key=api_key, temperature=0.4)
+        
+        self.model = ChatPerplexity(
+            model=llm_model,
+            api_key=api_key,
+            temperature=0.4,
+            system_message=self.get_system_prompt("resume")
+        )
 
     def invoke(self, prompt: str) -> BaseMessage:
         response = self.model.invoke(prompt)
@@ -128,6 +180,7 @@ class PerplexityModel(AIModel):
 # gemini doesn't seem to work because API doesn't rstitute answers for questions that involve answers that are too short
 class GeminiModel(AIModel):
     def __init__(self, api_key: str, llm_model: str):
+        super().__init__()
         from langchain_google_genai import (
             ChatGoogleGenerativeAI,
             HarmBlockThreshold,
@@ -137,6 +190,7 @@ class GeminiModel(AIModel):
         self.model = ChatGoogleGenerativeAI(
             model=llm_model,
             google_api_key=api_key,
+            system_message=self.get_system_prompt("resume"),
             safety_settings={
                 HarmCategory.HARM_CATEGORY_UNSPECIFIED: HarmBlockThreshold.BLOCK_NONE,
                 HarmCategory.HARM_CATEGORY_DEROGATORY: HarmBlockThreshold.BLOCK_NONE,
@@ -158,12 +212,16 @@ class GeminiModel(AIModel):
 
 class HuggingFaceModel(AIModel):
     def __init__(self, api_key: str, llm_model: str):
+        super().__init__()
         from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
 
         self.model = HuggingFaceEndpoint(
             repo_id=llm_model, huggingfacehub_api_token=api_key, temperature=0.4
         )
-        self.chatmodel = ChatHuggingFace(llm=self.model)
+        self.chatmodel = ChatHuggingFace(
+            llm=self.model,
+            system_message=self.get_system_prompt("resume")
+        )
 
     def invoke(self, prompt: str) -> BaseMessage:
         response = self.chatmodel.invoke(prompt)
@@ -416,10 +474,10 @@ class GPTAnswerer:
                 prompts.work_preferences_template
             ),
             EDUCATION_DETAILS: self._create_chain(
-                prompts.education_details_template
+                prompts.education_template
             ),
             EXPERIENCE_DETAILS: self._create_chain(
-                prompts.experience_details_template
+                prompts.experience_template
             ),
             PROJECTS: self._create_chain(prompts.projects_template),
             AVAILABILITY: self._create_chain(prompts.availability_template),
@@ -495,8 +553,8 @@ class GPTAnswerer:
         chain = prompt | self.llm_cheap | StrOutputParser()
         raw_output_str = chain.invoke(
             {
-                RESUME_EDUCATIONS: self.resume.education_details,
-                RESUME_JOBS: self.resume.experience_details,
+                RESUME_EDUCATIONS: self.resume.education,
+                RESUME_JOBS: self.resume.experience,
                 RESUME_PROJECTS: self.resume.projects,
                 QUESTION: question,
             }

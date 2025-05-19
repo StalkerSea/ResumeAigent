@@ -16,6 +16,7 @@ class main():
         settings = ConfigValidator.validate_app_settings("settings/settings.json")
         # Load localization settings
         self.localization_manager = LocalizationManager()
+        self.resume_maker = ResumeMaker(self.localization_manager)
         logger.info(self.localization_manager.change_language(settings["language"]))
     
     def handle_inquiries(self, selected_actions: List[str], parameters: dict, llm_api_key: str):
@@ -31,15 +32,15 @@ class main():
             while selected_actions:  # Changed to while loop to handle menu navigation
                 
                 if self.localization_manager.get_string("menu/generate/resume") == selected_actions:
-                    ResumeMaker.create_resume_pdf(parameters, llm_api_key)
+                    self.resume_maker.create_resume_pdf(parameters, llm_api_key)
                     break  # Exit after action is complete
                     
                 elif self.localization_manager.get_string("menu/generate/resume_tailored") == selected_actions:
-                    ResumeMaker.create_resume_pdf_tailored(parameters, llm_api_key)
+                    self.resume_maker.create_resume_pdf_tailored(parameters, llm_api_key)
                     break  # Exit after action is complete
                     
                 elif self.localization_manager.get_string("menu/generate/cover_letter") == selected_actions:
-                    ResumeMaker.create_cover_letter(parameters, llm_api_key)
+                    self.resume_maker.create_cover_letter(parameters, llm_api_key)
                     break  # Exit after action is complete
 
                 elif self.localization_manager.get_string("settings/prompt") == selected_actions:
@@ -107,7 +108,7 @@ class main():
             msg = answer.get('action', "")
             if msg == self.localization_manager.get_string("settings/language/title"):
                 # Prompt for new language
-                languages = ["English", "Español", "Français", "Deutsch", "Italiano"]
+                languages = ["English", "Español"]
                 questions = [
                     inquirer.List(
                         'language',

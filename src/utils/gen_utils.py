@@ -33,6 +33,7 @@ def format_execution_time(seconds: float) -> str:
     if minutes > 0:
         time_parts.append(f"{minutes} {localization_manager.get_string('time/minute') if minutes == 1 else localization_manager.get_string('time/minutes')}")
     if remaining_seconds > 0 or not time_parts:  # Include seconds if no larger units or if there are remaining seconds
-        time_parts.append(f"{remaining_seconds:.2f localization_manager.get_string('time/seconds')}")
+        seconds_str = f"{remaining_seconds:.2f}"
+        time_parts.append(f"{seconds_str} {localization_manager.get_string('time/seconds')}")
 
     return " ".join(time_parts)

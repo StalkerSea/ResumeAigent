@@ -8,8 +8,10 @@ from src.logging import logger
 from src.utils.chrome_utils import init_browser
 
 class ResumeMaker():
+    def __init__(self, localization_manager):
+        self.localization_manager = localization_manager
 
-    def create_cover_letter(parameters: dict, llm_api_key: str):
+    def create_cover_letter(self, parameters: dict, llm_api_key: str):
         """
         Logic to create a CV.
         """
@@ -31,7 +33,7 @@ class ResumeMaker():
                 questions = [
                     inquirer.List(
                         "style",
-                        message="Select a style for the resume",
+                        message=self.localization_manager.get_string("menu/select_style"),
                         choices=choices,
                     )
                 ]
@@ -46,7 +48,7 @@ class ResumeMaker():
                 else:
                     logger.warning("No style selected. Proceeding with default style.")
             questions = [
-                inquirer.Text('job_url', message="Please enter the URL of the job description")
+                inquirer.Text('job_url', message=self.localization_manager.get_string("menu/enter_job_url"))
             ]
             answers = inquirer.prompt(questions)
             job_url = answers.get('job_url')
@@ -103,7 +105,7 @@ class ResumeMaker():
             logger.exception(f"An error occurred while creating the CV: {e}")
             raise
 
-    def create_resume_pdf_tailored(parameters: dict, llm_api_key: str):
+    def create_resume_pdf_tailored(self, parameters: dict, llm_api_key: str):
         """
         Logic to create a CV.
         """
@@ -125,7 +127,7 @@ class ResumeMaker():
                 questions = [
                     inquirer.List(
                         "style",
-                        message="Select a style for the resume",
+                        message=self.localization_manager.get_string("menu/select_style"),
                         choices=choices,
                     )
                 ]
@@ -139,7 +141,7 @@ class ResumeMaker():
                             break
                 else:
                     logger.warning("No style selected. Proceeding with default style.")
-            questions = [inquirer.Text('job_url', message="Please enter the URL of the job description")]
+            questions = [inquirer.Text('job_url', message=self.localization_manager.get_string("menu/enter_job_url"))]
             answers = inquirer.prompt(questions)
             try: 
                 job_url = answers.get('job_url')
@@ -193,7 +195,7 @@ class ResumeMaker():
             logger.exception(f"An error occurred while creating the CV: {e}")
             raise
 
-    def create_resume_pdf(parameters: dict, llm_api_key: str):
+    def create_resume_pdf(self, parameters: dict, llm_api_key: str):
         """
         Logic to create a CV.
         """
@@ -216,7 +218,7 @@ class ResumeMaker():
                 questions = [
                     inquirer.List(
                         "style",
-                        message="Select a style for the resume",
+                        message=self.localization_manager.get_string("menu/select_style"),
                         choices=choices,
                     )
                 ]
