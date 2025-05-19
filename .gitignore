@@ -165,3 +165,4 @@ job_applications/
 data_folder/*
 /.config
 session_data.json
+settings/settings.json
